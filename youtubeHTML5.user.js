@@ -59,9 +59,6 @@ var setQueryMap = function(url, queryMap) {
   return parser.href;
 };
 
-var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
-                  'signature','source','sparams','sver','upn'];
-
 var getUsefulData = function () {
   var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/;
   var sources = document.body.innerHTML.match(pattern)[1].split(",");
@@ -72,13 +69,18 @@ var pickFirstMapWithTag = function(usefulData, key, value) {
   return usefulData.filter(function (datum) { return datum[key] == value; })[0];
 };
 
-var videoClue = pickFirstMapWithTag(getUsefulData(), "itag", "43");
-var url = decodeURIComponent(videoClue.url);
-var tags = getQueryMap(url);
-tags.signature = videoClue.sig;
-var finalURL = setQueryMap(url, selectKeys(tags, HTML5_KEYS));
-console.log(finalURL);
+var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
+                  'signature','source','sparams','sver','upn'];
 
+var acquireHTML5VideoURL = function() {
+  var videoClue = pickFirstMapWithTag(getUsefulData(), "itag", "43");
+  var url = decodeURIComponent(videoClue.url);
+  var tags = getQueryMap(url);
+  tags.signature = videoClue.sig;
+  return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
+};
+
+console.log(acquireHTML5VideoURL());
 
 //})();
 
