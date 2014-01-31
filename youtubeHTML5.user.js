@@ -80,8 +80,32 @@ var acquireHTML5VideoURL = function() {
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
-console.log(acquireHTML5VideoURL());
+var noScriptYouTube = function() {
+   var html5VideoURL = acquireHTML5VideoURL();
+   console.log(html5VideoURL);
+   var oldVideoElement = document.querySelector("video"),
+       videoBox = document.querySelector("div#movie_player"),
+       playerAPI = document.querySelector("div#player-api");
+   // Stop and destroy old video
+   oldVideoElement.src = ""
+   // Hide the containing box and controls.
+   videoBox.style.visibility = "hidden";
+   // Now make a new video element with controls.
+   var video = document.createElement('video');
+   video.src = html5VideoURL;
+   video.controls = true;
+   // Enclose new video in a div.
+   var newVideoBox = document.createElement('div');
+   newVideoBox.appendChild(video);
+   newVideoBox.style = "background-color: white; position: absolute; top: 0; bottom: 0; left: 0; z-index: 99;";
+   // Place it in the old playerAPI box.
+   playerAPI.style.position = "relative";
+   playerAPI.appendChild(newVideoBox);
+   // Play it!
+   video.play();
+};
 
+noScriptYouTube();
 //})();
 
 
