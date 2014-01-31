@@ -10,12 +10,6 @@
 console.log("youtubeHTML5");
 console.log(location.href);
 
-var getQueryString = function (url) {
-  var parser = document.createElement('a');
-  parser.href = url;
-  return parser.search;
-};
-
 var stringToMap = function (string, pairSep, kvSep) {
   var pairs = string.split(pairSep).map(function (kv) {
     return kv.split(kvSep);
@@ -31,6 +25,12 @@ var stringToMap = function (string, pairSep, kvSep) {
 var parseQueryString = function (queryString) {
   var trimmed = queryString.replace(/^\?/,"");
   return stringToMap(trimmed, "&", "=");
+};
+
+var getQueryString = function (url) {
+  var parser = document.createElement('a');
+  parser.href = url;
+  return parser.search;
 };
 
 var getQueryMap = function(url) {
@@ -65,18 +65,18 @@ var getUsefulData = function () {
   return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
 };
 
-var pickFirstMapWithTag = function(usefulData, key, value) {
-  return usefulData.filter(function (datum) { return datum[key] == value; })[0];
+var pickMapsWithTag = function(arrayOfObjects, key, value) {
+  return arrayOfObjects.filter(function (datum) { return datum[key] == value; });
 };
 
 var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
                   'signature','source','sparams','sver','upn'];
 
 var acquireHTML5VideoURL = function() {
-  var videoClue = pickFirstMapWithTag(getUsefulData(), "itag", "43"),
-      url = decodeURIComponent(videoClue.url),
+  var videoItem = pickMapsWithTag(getUsefulData(), "itag", "43")[0],
+      url = decodeURIComponent(videoItem.url),
       tags = getQueryMap(url);
-  tags.signature = videoClue.sig;
+  tags.signature = videoItem.sig;
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
