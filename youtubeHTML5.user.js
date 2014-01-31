@@ -49,9 +49,9 @@ var selectKeys = function (aMap, keys) {
 };
 
 var setQueryMap = function(url, queryMap) {
-  var parser = document.createElement('a');
+  var parser = document.createElement('a'),
+      queryString = "?";
   parser.href = url;
-  var queryString = "?";
   for (var key in queryMap) {
     queryString += key + "=" + queryMap[key] + "&";
   }
@@ -60,8 +60,8 @@ var setQueryMap = function(url, queryMap) {
 };
 
 var getUsefulData = function () {
-  var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/;
-  var sources = document.body.innerHTML.match(pattern)[1].split(",");
+  var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
+      sources = document.body.innerHTML.match(pattern)[1].split(",");
   return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
 };
 
@@ -73,9 +73,9 @@ var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv'
                   'signature','source','sparams','sver','upn'];
 
 var acquireHTML5VideoURL = function() {
-  var videoClue = pickFirstMapWithTag(getUsefulData(), "itag", "43");
-  var url = decodeURIComponent(videoClue.url);
-  var tags = getQueryMap(url);
+  var videoClue = pickFirstMapWithTag(getUsefulData(), "itag", "43"),
+      url = decodeURIComponent(videoClue.url),
+      tags = getQueryMap(url);
   tags.signature = videoClue.sig;
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
