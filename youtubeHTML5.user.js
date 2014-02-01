@@ -69,12 +69,21 @@ var pickMapsWithTag = function(arrayOfObjects, key, value) {
   return arrayOfObjects.filter(function (datum) { return datum[key] == value; });
 };
 
+var changeToHttps = function(url) {
+  var parser = document.createElement('a');
+  parser.href = url;
+  if (parser.protocol === "http:") {
+    parser.protocol = "https:";
+  }
+  return parser.href;
+};
+
 var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
                   'signature','source','sparams','sver','upn'];
 
 var acquireHTML5VideoURL = function() {
   var videoItem = pickMapsWithTag(getUsefulData(), "itag", "43")[0],
-      url = decodeURIComponent(videoItem.url),
+      url = changeToHttps(decodeURIComponent(videoItem.url)),
       tags = getQueryMap(url);
   tags.signature = videoItem.sig;
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
@@ -98,11 +107,11 @@ var noScriptYouTube = function() {
    var video = document.createElement('video');
    video.src = html5VideoURL;
    video.controls = true;
-   video.style = "position: absolute; top: 0; bottom: 0; left: 0; right: 0;";
+   video.style = "width: 100%; height: 100%;";
    // Enclose new video in a div.
    var newVideoBox = document.createElement('div');
    newVideoBox.appendChild(video);
-   newVideoBox.style = "text-align: center; background-color: white; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
+   newVideoBox.style = "background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
    // Place it in the old playerAPI box.
    playerAPI.style.position = "relative";
    playerAPI.appendChild(newVideoBox);
