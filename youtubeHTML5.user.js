@@ -101,7 +101,7 @@ var noScriptYouTube = function() {
    // Enclose new video in a div.
    var newVideoBox = document.createElement('div');
    newVideoBox.appendChild(video);
-   newVideoBox.style = "background-color: white; position: absolute; top: 0; bottom: 0; left: 0; z-index: 99;";
+   newVideoBox.style = "background-color: white; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
    // Place it in the old playerAPI box.
    playerAPI.style.position = "relative";
    playerAPI.appendChild(newVideoBox);
