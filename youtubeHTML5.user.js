@@ -6,7 +6,7 @@
 // @version     1
 // @grant       none
 // ==/UserScript==
-/*(function () {*/
+(function () {
 console.log("youtubeHTML5");
 console.log(location.href);
 
@@ -87,9 +87,13 @@ var noScriptYouTube = function() {
        videoBox = document.querySelector("div#movie_player"),
        playerAPI = document.querySelector("div#player-api");
    // Stop and destroy old video
-   oldVideoElement.src = ""
-   // Hide the containing box and controls.
+   if (oldVideoElement !== null) {
+     oldVideoElement.src = ""
+   }
+   if (videoBox !== null) {
+     // Hide the containing box and controls.
    videoBox.style.visibility = "hidden";
+   }
    // Now make a new video element with controls.
    var video = document.createElement('video');
    video.src = html5VideoURL;
@@ -106,7 +110,7 @@ var noScriptYouTube = function() {
 };
 
 noScriptYouTube();
-//})();
+})();
 
 
 
