@@ -94,15 +94,9 @@ var extractHTML5VideoURL = function (bodyHTML) {
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
-var noScriptYouTube = function() {
-   if (!isHttps(location.href)) {
-     location.href = changeToHttps(location.href);
-   }
-   var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
-   //console.log(html5VideoURL);
+var removeOldVideo = function () {
    var oldVideoElement = document.querySelector("video"),
-     videoBox = document.querySelector("div#movie_player"),
-     playerAPI = document.querySelector("div#player-api");
+       videoBox = document.querySelector("div#movie_player");
    // Stop and destroy old video
    if (oldVideoElement !== null) {
      oldVideoElement.src = ""
@@ -111,18 +105,37 @@ var noScriptYouTube = function() {
      // Hide the containing box and controls.
      videoBox.style.visibility = "hidden";
    }
-   // Now make a new video element with controls.
+};
+
+// Make a new video element with controls.
+var createNewVideoElement = function(html5VideoURL) {
    var video = document.createElement('video');
    video.src = html5VideoURL;
    video.controls = true;
    video.style = "width: 100%; height: 100%;";
-   // Enclose new video in a div.
-   var newVideoBox = document.createElement('div');
-   newVideoBox.appendChild(video);
-   newVideoBox.style = "background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
-   // Place it in the old playerAPI box.
-   playerAPI.style.position = "relative";
-   playerAPI.appendChild(newVideoBox);
+};
+
+var embedVideo = function (videoElement) {
+  document.createElement('div');
+  newVideoBox.appendChild(video);
+  newVideoBox.style = "background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
+  // Place it in the old playerAPI box.
+  var playerAPI = document.querySelector("div#player-api");
+  playerAPI.style.position = "relative";
+  playerAPI.appendChild(newVideoBox);
+};
+
+var noScriptYouTube = function() {
+   if (!isHttps(location.href)) {
+     location.href = changeToHttps(location.href);
+   }
+   var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
+   if (html5VideoURL === null) {
+     return;
+   }
+   removeOldVideo();
+   var video = createNewVideoElement(html5VideoURL);
+   embedVideo(video);
    // Play it!
    video.play();
 };
