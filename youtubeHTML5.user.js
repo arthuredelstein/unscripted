@@ -98,6 +98,7 @@ var noScriptYouTube = function() {
    var video = document.createElement('video');
    video.src = html5VideoURL;
    video.controls = true;
+   video.style = "position: absolute; top: 0; bottom: 0; left: 0; right: 0;";
    // Enclose new video in a div.
    var newVideoBox = document.createElement('div');
    newVideoBox.appendChild(video);
