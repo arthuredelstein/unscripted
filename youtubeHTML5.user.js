@@ -18,7 +18,7 @@ var stringToMap = function (string, pairSep, kvSep) {
     var pair = pairs[i];
     result[pair[0]] = pair[1];
   }
-  return result;  
+  return result;
 };
 
 var parseQueryString = function (queryString) {
@@ -58,12 +58,6 @@ var setQueryMap = function(url, queryMap) {
   return parser.href;
 };
 
-var getUsefulData = function () {
-  var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
-      sources = document.body.innerHTML.match(pattern)[1].split(",");
-  return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
-};
-
 var pickMapsWithTag = function(arrayOfObjects, key, value) {
   return arrayOfObjects.filter(function (datum) { return datum[key] == value; });
 };
@@ -83,13 +77,18 @@ var isHttps = function (url) {
   return parser.protocol === "https:";
 };
 
+var getUsefulData = function (bodyHTML) {
+  var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
+      sources = bodyHTML.match(pattern)[1].split(",");
+  return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
+};
+
 var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
                   'signature','source','sparams','sver','upn'];
 
-var acquireHTML5VideoURL = function() {
-  var videoItem = pickMapsWithTag(getUsefulData(), "itag", "43")[0],
-      //url = changeToHttps(decodeURIComponent(videoItem.url)),      
-      url = decodeURIComponent(videoItem.url),
+var extractHTML5VideoURL = function (bodyHTML) {
+  var videoItem = pickMapsWithTag(getUsefulData(bodyHTML), "itag", "43")[0],
+      url = changeToHttps(decodeURIComponent(videoItem.url)),
       tags = getQueryMap(url);
   tags.signature = videoItem.sig;
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
@@ -99,7 +98,7 @@ var noScriptYouTube = function() {
    if (!isHttps(location.href)) {
      location.href = changeToHttps(location.href);
    }
-   var html5VideoURL = acquireHTML5VideoURL();
+   var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
    //console.log(html5VideoURL);
    var oldVideoElement = document.querySelector("video"),
      videoBox = document.querySelector("div#movie_player"),
@@ -130,6 +129,3 @@ var noScriptYouTube = function() {
 
 noScriptYouTube();
 })();
-
-
-
