@@ -3,12 +3,11 @@
 // @namespace   arthuredelstein.com
 // @description run html5 video on youtube
 // @include     https://www.youtube.com/*
+// @include     http://www.youtube.com/*
 // @version     1
 // @grant       none
 // ==/UserScript==
 (function () {
-console.log("youtubeHTML5");
-console.log(location.href);
 
 var stringToMap = function (string, pairSep, kvSep) {
   var pairs = string.split(pairSep).map(function (kv) {
@@ -69,7 +68,7 @@ var pickMapsWithTag = function(arrayOfObjects, key, value) {
   return arrayOfObjects.filter(function (datum) { return datum[key] == value; });
 };
 
-var changeToHttps = function(url) {
+var changeToHttps = function (url) {
   var parser = document.createElement('a');
   parser.href = url;
   if (parser.protocol === "http:") {
@@ -78,30 +77,40 @@ var changeToHttps = function(url) {
   return parser.href;
 };
 
+var isHttps = function (url) {
+  var parser = document.createElement('a');
+  parser.href = url;
+  return parser.protocol === "https:";
+};
+
 var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms','mt','mv','ratebypass',
                   'signature','source','sparams','sver','upn'];
 
 var acquireHTML5VideoURL = function() {
   var videoItem = pickMapsWithTag(getUsefulData(), "itag", "43")[0],
-      url = changeToHttps(decodeURIComponent(videoItem.url)),
+      //url = changeToHttps(decodeURIComponent(videoItem.url)),      
+      url = decodeURIComponent(videoItem.url),
       tags = getQueryMap(url);
   tags.signature = videoItem.sig;
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
 var noScriptYouTube = function() {
+   if (!isHttps(location.href)) {
+     location.href = changeToHttps(location.href);
+   }
    var html5VideoURL = acquireHTML5VideoURL();
-   console.log(html5VideoURL);
+   //console.log(html5VideoURL);
    var oldVideoElement = document.querySelector("video"),
-       videoBox = document.querySelector("div#movie_player"),
-       playerAPI = document.querySelector("div#player-api");
+     videoBox = document.querySelector("div#movie_player"),
+     playerAPI = document.querySelector("div#player-api");
    // Stop and destroy old video
    if (oldVideoElement !== null) {
      oldVideoElement.src = ""
    }
    if (videoBox !== null) {
      // Hide the containing box and controls.
-   videoBox.style.visibility = "hidden";
+     videoBox.style.visibility = "hidden";
    }
    // Now make a new video element with controls.
    var video = document.createElement('video');
