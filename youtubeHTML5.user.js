@@ -111,13 +111,14 @@ var removeOldVideo = function () {
 var createNewVideoElement = function(html5VideoURL) {
    var video = document.createElement('video');
    video.src = html5VideoURL;
-   video.controls = true;
+   video.controls = "controls";
    video.style = "width: 100%; height: 100%;";
+   return video;
 };
 
 var embedVideo = function (videoElement) {
-  document.createElement('div');
-  newVideoBox.appendChild(video);
+  var newVideoBox = document.createElement('div');
+  newVideoBox.appendChild(videoElement);
   newVideoBox.style = "background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
   // Place it in the old playerAPI box.
   var playerAPI = document.querySelector("div#player-api");
