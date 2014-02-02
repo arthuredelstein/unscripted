@@ -34,18 +34,24 @@ or <a href="https://github.com/arthuredelstein/unscripted">downloaded from githu
 ==/UserScript==
 </pre>
 
-<p>Enclose all in a function to avoid polluting the
-global namespace.</p>
 
           
-            <div class='highlight'><pre>(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-<span class="string">"use strict"</span>;</pre></div>
+            <div class='highlight'><pre><span class="comment">/*jshint multistr: true */</span></pre></div>
           
         
 
         
       </div>
 
+      
+        
+        <p>Enclose all in a function to avoid polluting the
+global namespace.</p>
+
+        
+          <div class='highlight'><pre>(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+<span class="string">"use strict"</span>;</pre></div>
+        
       
         
         <h3 id="utility-functions-all-referentially-transparent-">Utility functions (all referentially transparent)</h3>
@@ -173,7 +179,7 @@ converts it to HTTPS.</p>
         
       
         
-        <h3 id="youtube-specific-functions">YouTube-specific functions</h3>
+        <h3 id="youtube-scraping-functions">YouTube-scraping functions</h3>
 <p>For extracting a URL of an HTML5 video.</p>
 <p>Scrapes useful video location data and signatures from a YouTube page.</p>
 
@@ -219,16 +225,16 @@ that points to an HTML5 version of the video.</p>
 
         
           <div class='highlight'><pre><span class="keyword">var</span> extractHTML5VideoURL = <span class="function"><span class="keyword">function</span> <span class="params">(bodyHTML)</span> {</span>
-  <span class="keyword">var</span> videoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="string">"itag"</span>, <span class="string">"43"</span>)[<span class="number">0</span>],</pre></div>
+  <span class="keyword">var</span> chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="string">"itag"</span>, <span class="string">"43"</span>)[<span class="number">0</span>],</pre></div>
         
       
         
-        <p>The &#39;url&#39; tag from videoItem contains most of the URL we need
+        <p>The &#39;url&#39; tag from chosenVideoItem contains most of the URL we need
 for obtaining the HTML5 video. URL-decode the tag to get a pure
 URL, and ensure it uses HTTPS.</p>
 
         
-          <div class='highlight'><pre>      url = changeToHttps(decodeURIComponent(videoItem.url)),</pre></div>
+          <div class='highlight'><pre>      url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),</pre></div>
         
       
         
@@ -243,7 +249,7 @@ URL, and ensure it uses HTTPS.</p>
 from sig to signature.</p>
 
         
-          <div class='highlight'><pre>  tags.signature = videoItem.sig;</pre></div>
+          <div class='highlight'><pre>  tags.signature = chosenVideoItem.sig;</pre></div>
         
       
         
@@ -255,65 +261,11 @@ from sig to signature.</p>
         
       
         
-        <h3 id="youtube-page-manipulation">YouTube Page Manipulation</h3>
-<p>Functions that mutate the YouTube page&#39;s DOM to replace
-the default video with an HTML5 version.</p>
-<p>Remove the old flash/JS video presented by the YouTube page.</p>
+        <h3 id="mutating-the-youtube-page-">Mutating the YouTube page.</h3>
+<p>Embed the video element in the YouTube page and return a reference to it.</p>
 
         
-          <div class='highlight'><pre><span class="keyword">var</span> removeOldVideo = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-   <span class="keyword">var</span> oldVideoElement = document.querySelector(<span class="string">"video"</span>),
-       videoBox = document.querySelector(<span class="string">"div#movie_player"</span>);</pre></div>
-        
-      
-        
-        <p>Stop and destroy old video</p>
-
-        
-          <div class='highlight'><pre>   <span class="keyword">if</span> (oldVideoElement !== <span class="literal">null</span>) {
-     oldVideoElement.src = <span class="string">""</span>;
-   }
-   <span class="keyword">if</span> (videoBox !== <span class="literal">null</span>) {</pre></div>
-        
-      
-        
-        <p>Hide the containing box and controls.</p>
-
-        
-          <div class='highlight'><pre>     videoBox.style.visibility = <span class="string">"hidden"</span>;
-   }
-};</pre></div>
-        
-      
-        
-        <p>Make a new video element with controls.</p>
-
-        
-          <div class='highlight'><pre><span class="keyword">var</span> createNewVideoElement = <span class="function"><span class="keyword">function</span><span class="params">(html5VideoURL)</span> {</span>
-   <span class="keyword">var</span> video = document.createElement(<span class="string">'video'</span>);
-   video.src = html5VideoURL;
-   video.controls = <span class="string">"controls"</span>;</pre></div>
-        
-      
-        
-        <p>Ensure that video fills its parent div as much as possible.
-If video is too short, we get the letterbox effect. If too
-narrow, we get pillarboxing instead.</p>
-
-        
-          <div class='highlight'><pre>   video.style = <span class="string">"width: 100%; height: 100%;"</span>;
-   <span class="keyword">return</span> video;
-};</pre></div>
-        
-      
-        
-        <p>Embed the video element in the YouTube page.</p>
-
-        
-          <div class='highlight'><pre><span class="keyword">var</span> embedVideo = <span class="function"><span class="keyword">function</span> <span class="params">(videoElement)</span> {</span>
-  <span class="keyword">var</span> newVideoBox = document.createElement(<span class="string">'div'</span>);
-  newVideoBox.appendChild(videoElement);
-  newVideoBox.style = <span class="string">"background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"</span>;</pre></div>
+          <div class='highlight'><pre><span class="keyword">var</span> embedVideo = <span class="function"><span class="keyword">function</span> <span class="params">(html5VideoURL)</span> {</span></pre></div>
         
       
         
@@ -322,7 +274,25 @@ narrow, we get pillarboxing instead.</p>
         
           <div class='highlight'><pre>  <span class="keyword">var</span> playerAPI = document.querySelector(<span class="string">"div#player-api"</span>);
   playerAPI.style.position = <span class="string">"relative"</span>;
-  playerAPI.appendChild(newVideoBox);
+  playerAPI.innerHTML = <span class="string">'&lt;div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"&gt; \
+                        &lt;video id="unscripted" src="'</span> + html5VideoURL + <span class="string">'" style="width: 100%; height: 100%" controls&gt;&lt;/video&gt; \
+                        &lt;/div&gt;'</span>;
+  <span class="keyword">return</span> document.querySelector(<span class="string">'video#unscripted'</span>);
+};</pre></div>
+        
+      
+        
+        <p>Restore the thumbnail images that inexplicably need JavaScript to be visible.</p>
+
+        
+          <div class='highlight'><pre><span class="keyword">var</span> restoreThumbnailImages = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+  <span class="keyword">var</span> images = document.querySelectorAll(<span class="string">'span.yt-thumb-clip img'</span>);
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; images.length; ++i) {
+    <span class="keyword">var</span> image = images[i];
+    <span class="keyword">if</span> (image.hasAttribute(<span class="string">'data-thumb'</span>)) {
+      image.src = image.getAttribute(<span class="string">'data-thumb'</span>);
+    }
+  }
 };</pre></div>
         
       
@@ -342,30 +312,32 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
           <div class='highlight'><pre>   <span class="keyword">if</span> (!isHttps(location.href)) {
      location.href = changeToHttps(location.href);
    }
-   <span class="keyword">var</span> html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);</pre></div>
-        
-      
-        
-        <p>If we are unable to extract the needed URL, then abort.</p>
-
-        
-          <div class='highlight'><pre>   <span class="keyword">if</span> (html5VideoURL === <span class="literal">null</span>) { <span class="keyword">return</span>; }</pre></div>
+   <span class="keyword">try</span> {
+     <span class="keyword">var</span> html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);</pre></div>
         
       
         
         <p>Swap old video for new HTML5 video.</p>
 
         
-          <div class='highlight'><pre>   removeOldVideo();
-   <span class="keyword">var</span> video = createNewVideoElement(html5VideoURL);
-   embedVideo(video);</pre></div>
+          <div class='highlight'><pre>     <span class="keyword">var</span> video = embedVideo(html5VideoURL);</pre></div>
         
       
         
         <p>Play the video immediately, just as YouTube does.</p>
 
         
-          <div class='highlight'><pre>   video.play();
+          <div class='highlight'><pre>     video.play();
+   } <span class="keyword">catch</span> (e) {
+     console.log(e);</pre></div>
+        
+      
+        
+        <p>Never mind.</p>
+
+        
+          <div class='highlight'><pre>   }
+   restoreThumbnailImages();
 };</pre></div>
         
       
