@@ -1,4 +1,5 @@
-// # youtubeHTML5.user.js
+// # Watch YouTube with JavaScript turned off
+// A GreaseMonkey user script.
 
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
