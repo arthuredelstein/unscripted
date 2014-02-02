@@ -207,4 +207,6 @@ var noScriptYouTube = function() {
 // Run the main function to immediately make YouTube page work even if the
 // page's JavaScript is disabled.
 noScriptYouTube();
+
+// Terminate enclosing function.
 })();
