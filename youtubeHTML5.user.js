@@ -20,12 +20,13 @@
 // Enclose all in a function to avoid polluting the
 // global namespace.
 (function () {
+"use strict";
 
 // Takes a string representing a key->value map, and parses
 // it, given the expected string separating key-value pairs,
 // and the separator between each key and value.
 // For example, JSON maps (stripped of their curly braces)
-// would require pairSep = "," and kvSep = ":". 
+// would require pairSep = "," and kvSep = ":".
 var stringToMap = function (string, pairSep, kvSep) {
   var pairs = string.split(pairSep).map(function (kv) {
     return kv.split(kvSep);
@@ -39,7 +40,7 @@ var stringToMap = function (string, pairSep, kvSep) {
 };
 
 // Returns the query string from a URL, including the
-// initial '?'. 
+// initial '?'.
 var getQueryString = function (url) {
   var parser = document.createElement('a');
   parser.href = url;
@@ -60,7 +61,7 @@ var getQueryMap = function(url) {
 };
 
 // Takes a JSON object (aMap) and returns a new JSON
-// object with only the desired keys. 
+// object with only the desired keys.
 var selectKeys = function (aMap, desiredKeys) {
   var result = {};
   for (var i = 0; i < desiredKeys.length; ++i) {
@@ -116,7 +117,7 @@ var scrapeVideoLocationData = function (bodyHTML) {
   // Location data can be found in JSON object literals inside an inline SCRIPT tag.
   var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
       // A series of literal maps each corresponds to a way to request a different
-      // format of the same video. 
+      // format of the same video.
       sources = bodyHTML.match(pattern)[1].split(",");
   // Read the data from these literal maps.
   return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
@@ -153,7 +154,7 @@ var removeOldVideo = function () {
        videoBox = document.querySelector("div#movie_player");
    // Stop and destroy old video
    if (oldVideoElement !== null) {
-     oldVideoElement.src = ""
+     oldVideoElement.src = "";
    }
    if (videoBox !== null) {
      // Hide the containing box and controls.
