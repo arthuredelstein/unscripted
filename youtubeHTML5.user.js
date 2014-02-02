@@ -1,3 +1,11 @@
+// # youtubeHTML5.user.js
+// This is a GreaseMonkey user-script for making
+// a YouTube page display an HTML5 video that can
+// be viewed even if the page's JavaScript is disabled.
+
+// First, the UserScript preamble.
+
+// <pre>
 // ==UserScript==
 // @name        youtubeHTML5
 // @namespace   arthuredelstein.com
@@ -7,6 +15,10 @@
 // @version     1
 // @grant       none
 // ==/UserScript==
+// </pre>
+
+// Enclose all in a function to avoid polluting the
+// global namespace.
 (function () {
 
 // Takes a string representing a key->value map, and parses
@@ -174,7 +186,7 @@ var embedVideo = function (videoElement) {
 
 // ### The main function
 
-// Alter the YouTube page to show its video without using any nonlocal JavaScript.
+// Alter the YouTube page to show its video without needing the page's JavaScript.
 var noScriptYouTube = function() {
    // Let's always use HTTPS in this script, to be safer.
    // Redundant if user uses the HTTPSEverywhere plugin.
@@ -192,7 +204,7 @@ var noScriptYouTube = function() {
    video.play();
 };
 
-// Run the main function to immediately make YouTube page work without
-// nonlocal JavaScript.
+// Run the main function to immediately make YouTube page work even if the
+// page's JavaScript is disabled.
 noScriptYouTube();
 })();
