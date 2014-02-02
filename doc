@@ -1,4 +1,5 @@
 git checkout gh-pages
+git merge master
 docco --layout=linear youtubeHTML5.user.js
 git commit -am "update documentation"
 git push origin gh-pages
