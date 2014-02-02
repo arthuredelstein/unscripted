@@ -1,6 +1,6 @@
 // # youtubeHTML5.user.js
 
-// (C) 2014 Arthur Edelstein, BSD 3.0 License.
+// by Arthur Edelstein, 2014. BSD 3-Clause License.
 
 // This is a GreaseMonkey user-script for making
 // a YouTube page display an HTML5 video that can
