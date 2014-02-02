@@ -6,6 +6,9 @@
 // a YouTube page display an HTML5 video that can
 // be viewed even if the page's JavaScript is disabled.
 
+// This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
+// or [downloaded from github](https://github.com/arthuredelstein/unscripted).
+
 // First, the UserScript preamble.
 
 // <pre>
