@@ -22,6 +22,8 @@
 (function () {
 "use strict";
 
+// ### Utility functions (all referentially transparent)
+
 // Takes a string representing a key->value map, and parses
 // it, given the expected string separating key-value pairs,
 // and the separator between each key and value.
@@ -110,7 +112,8 @@ var isHttps = function (url) {
   return parser.protocol === "https:";
 };
 
-// ### YouTube-specific functions for extracting a URL of an HTML5 video.
+// ### YouTube-specific functions
+// For extracting a URL of an HTML5 video.
 
 // Scrapes useful video location data and signatures from a YouTube page.
 var scrapeVideoLocationData = function (bodyHTML) {
