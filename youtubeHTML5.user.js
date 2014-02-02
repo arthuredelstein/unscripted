@@ -23,6 +23,8 @@
 // ==/UserScript==
 // </pre>
 
+/*jshint multistr: true */
+
 // Enclose all in a function to avoid polluting the
 // global namespace.
 (function () {
@@ -140,16 +142,16 @@ var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms',
 // Scrape necessary data from the YouTube page to construct a URL
 // that points to an HTML5 version of the video.
 var extractHTML5VideoURL = function (bodyHTML) {
-  var videoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
-      // The 'url' tag from videoItem contains most of the URL we need
+  var chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
+      // The 'url' tag from chosenVideoItem contains most of the URL we need
       // for obtaining the HTML5 video. URL-decode the tag to get a pure
       // URL, and ensure it uses HTTPS.
-      url = changeToHttps(decodeURIComponent(videoItem.url)),
+      url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),
       // Read the tags from this URL, in turn.
       tags = getQueryMap(url);
   // The sig tag is necessary to obtain the video. Key name changes
   // from sig to signature.
-  tags.signature = videoItem.sig;
+  tags.signature = chosenVideoItem.sig;
   // Return a URL that has just the tags we need and no others.
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
@@ -167,6 +169,17 @@ var embedVideo = function (html5VideoURL) {
   return document.querySelector('video#unscripted');
 };
 
+// Restore the thumbnail images that inexplicably need JavaScript to be visible.
+var restoreThumbnailImages = function () {
+  var images = document.querySelectorAll('span.yt-thumb-clip img');
+  for (var i = 0; i < images.length; ++i) {
+    var image = images[i];
+    if (image.hasAttribute('data-thumb')) {
+      image.src = image.getAttribute('data-thumb');
+    }
+  }
+};
+
 // ### The main function
 
 // Alter the YouTube page to show its video without needing the page's JavaScript.
@@ -176,13 +189,17 @@ var noScriptYouTube = function() {
    if (!isHttps(location.href)) {
      location.href = changeToHttps(location.href);
    }
-   var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
-   // If we are unable to extract the needed URL, then abort.
-   if (html5VideoURL === null) { return; }
-   // Swap old video for new HTML5 video.
-   var video = embedVideo(html5VideoURL);
-   // Play the video immediately, just as YouTube does.
-   video.play();
+   try {
+     var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
+     // Swap old video for new HTML5 video.
+     var video = embedVideo(html5VideoURL);
+     // Play the video immediately, just as YouTube does.
+     video.play();
+   } catch (e) {
+     console.log(e);
+     // Never mind.
+   }
+   restoreThumbnailImages();
 };
 
 // Run the main function to immediately make YouTube page work even if the
