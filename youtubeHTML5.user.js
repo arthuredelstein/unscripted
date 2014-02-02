@@ -1,4 +1,7 @@
 // # youtubeHTML5.user.js
+
+// (C) 2014 Arthur Edelstein, BSD 3.0 License.
+
 // This is a GreaseMonkey user-script for making
 // a YouTube page display an HTML5 video that can
 // be viewed even if the page's JavaScript is disabled.
