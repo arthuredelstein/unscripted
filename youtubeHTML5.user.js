@@ -1,4 +1,4 @@
-// # YouTube without JavaScript
+// # YouTube without JavaScript or Flash
 
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
