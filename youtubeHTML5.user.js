@@ -145,7 +145,8 @@ var extractHTML5VideoURL = function (bodyHTML) {
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
-// ### Functions that mutate the YouTube page's DOM to replace
+// ### YouTube Page Manipulation
+// Functions that mutate the YouTube page's DOM to replace
 // the default video with an HTML5 version.
 
 // Remove the old flash/JS video presented by the YouTube page.
