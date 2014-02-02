@@ -4,7 +4,7 @@
 
 // This user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) extension
 // lets you view videos on YouTube pages even if Flash and the page's JavaScript is disabled. In particular, I hope this
-// is useful for the Tor Browser Bundle.
+// script is useful for the Tor Browser Bundle.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
 // or [downloaded from github](https://github.com/arthuredelstein/unscripted).
