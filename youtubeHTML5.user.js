@@ -2,9 +2,9 @@
 
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
-// This is a GreaseMonkey user-script for making
-// a YouTube page display an HTML5 video that can
-// be viewed even if the page's JavaScript is disabled.
+// This is a user-script for Firefox's [Greasemonkey]https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/ plugin
+// that lets you view videos on YouTube pages even if the page's JavaScript is disabled. In particular, I hope this
+// is useful for the Tor Browser Bundle.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
 // or [downloaded from github](https://github.com/arthuredelstein/unscripted).
