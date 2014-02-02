@@ -118,7 +118,7 @@ var isHttps = function (url) {
   return parser.protocol === "https:";
 };
 
-// ### YouTube-specific functions
+// ### YouTube-scraping functions
 // For extracting a URL of an HTML5 video.
 
 // Scrapes useful video location data and signatures from a YouTube page.
@@ -154,45 +154,17 @@ var extractHTML5VideoURL = function (bodyHTML) {
   return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
 };
 
-// ### YouTube Page Manipulation
-// Functions that mutate the YouTube page's DOM to replace
-// the default video with an HTML5 version.
+// ### Mutating the YouTube page.
 
-// Remove the old flash/JS video presented by the YouTube page.
-var removeOldVideo = function () {
-   var oldVideoElement = document.querySelector("video"),
-       videoBox = document.querySelector("div#movie_player");
-   // Stop and destroy old video
-   if (oldVideoElement !== null) {
-     oldVideoElement.src = "";
-   }
-   if (videoBox !== null) {
-     // Hide the containing box and controls.
-     videoBox.style.visibility = "hidden";
-   }
-};
-
-// Make a new video element with controls.
-var createNewVideoElement = function(html5VideoURL) {
-   var video = document.createElement('video');
-   video.src = html5VideoURL;
-   video.controls = "controls";
-   // Ensure that video fills its parent div as much as possible.
-   // If video is too short, we get the letterbox effect. If too
-   // narrow, we get pillarboxing instead.
-   video.style = "width: 100%; height: 100%;";
-   return video;
-};
-
-// Embed the video element in the YouTube page.
-var embedVideo = function (videoElement) {
-  var newVideoBox = document.createElement('div');
-  newVideoBox.appendChild(videoElement);
-  newVideoBox.style = "background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;";
+// Embed the video element in the YouTube page and return a reference to it.
+var embedVideo = function (html5VideoURL) {
   // Place it in the old playerAPI box.
   var playerAPI = document.querySelector("div#player-api");
   playerAPI.style.position = "relative";
-  playerAPI.appendChild(newVideoBox);
+  playerAPI.innerHTML = '<div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"> \
+                        <video id="unscripted" src="' + html5VideoURL + '" style="width: 100%; height: 100%" controls></video> \
+                        </div>';
+  return document.querySelector('video#unscripted');
 };
 
 // ### The main function
@@ -208,9 +180,7 @@ var noScriptYouTube = function() {
    // If we are unable to extract the needed URL, then abort.
    if (html5VideoURL === null) { return; }
    // Swap old video for new HTML5 video.
-   removeOldVideo();
-   var video = createNewVideoElement(html5VideoURL);
-   embedVideo(video);
+   var video = embedVideo(html5VideoURL);
    // Play the video immediately, just as YouTube does.
    video.play();
 };
