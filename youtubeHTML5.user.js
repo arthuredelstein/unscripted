@@ -2,7 +2,7 @@
 
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
-// This is a user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/ plugin)
+// This is a user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) extension
 // that lets you view videos on YouTube pages even if Flash and the page's JavaScript is disabled. In particular, I hope this
 // is useful for the Tor Browser Bundle.
 
