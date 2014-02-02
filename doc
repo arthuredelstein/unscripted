@@ -1,1 +1,1 @@
-docco --layout=linear youtubeHTML5.user.js
+docco --layout=parallel youtubeHTML5.user.js

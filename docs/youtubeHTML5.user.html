@@ -4,17 +4,24 @@
 <head>
   <title>YouTube Unscripted</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="page">
-
-      <div class="header">
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
         
-          
-          <h1 id="youtube-unscripted">YouTube Unscripted</h1>
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="youtube-unscripted">YouTube Unscripted</h1>
 <p>by Arthur Edelstein, 2014. <a href="http://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause License.</a></p>
 <p>This user-script for Firefox&#39;s <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">Greasemonkey</a> extension
 lets you view videos on YouTube pages even if Flash and the page&#39;s JavaScript is disabled. In particular, I hope this
@@ -35,34 +42,46 @@ or <a href="https://github.com/arthuredelstein/unscripted">downloaded from githu
 </pre>
 
 
-          
-            <div class='highlight'><pre><span class="comment">/*jshint multistr: true */</span></pre></div>
-          
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment">/*jshint multistr: true */</span></pre></div></div>
+            
+        </li>
         
-
         
-      </div>
-
-      
-        
-        <p>Enclose all in a function to avoid polluting the
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Enclose all in a function to avoid polluting the
 global namespace.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+<span class="string">"use strict"</span>;</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-<span class="string">"use strict"</span>;</pre></div>
         
-      
-        
-        <h3 id="utility-functions-all-referentially-transparent-">Utility functions (all referentially transparent)</h3>
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="utility-functions-all-referentially-transparent-">Utility functions (all referentially transparent)</h3>
 <p>Takes a string representing a key-&gt;value map, and parses
 it, given the expected string separating key-value pairs,
 and the separator between each key and value.
 For example, JSON maps (stripped of their curly braces)
 would require pairSep = &quot;,&quot; and kvSep = &quot;:&quot;.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> stringToMap = <span class="function"><span class="keyword">function</span> <span class="params">(string, pairSep, kvSep)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> stringToMap = <span class="function"><span class="keyword">function</span> <span class="params">(string, pairSep, kvSep)</span> {</span>
   <span class="keyword">var</span> pairs = string.split(pairSep).map(<span class="function"><span class="keyword">function</span> <span class="params">(kv)</span> {</span>
     <span class="keyword">return</span> kv.split(kvSep);
   });
@@ -72,48 +91,80 @@ would require pairSep = &quot;,&quot; and kvSep = &quot;:&quot;.</p>
     result[pair[<span class="number">0</span>]] = pair[<span class="number">1</span>];
   }
   <span class="keyword">return</span> result;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Returns the query string from a URL, including the
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Returns the query string from a URL, including the
 initial &#39;?&#39;.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> getQueryString = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> getQueryString = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
   <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
   parser.href = url;
   <span class="keyword">return</span> parser.search;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Reads the query (&quot;search&quot;) part of a URL and converts
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Reads the query (&quot;search&quot;) part of a URL and converts
 it to a map.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> parseQueryString = <span class="function"><span class="keyword">function</span> <span class="params">(queryString)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> parseQueryString = <span class="function"><span class="keyword">function</span> <span class="params">(queryString)</span> {</span>
   <span class="keyword">var</span> trimmed = queryString.replace(<span class="regexp">/^\?/</span>,<span class="string">""</span>);
   <span class="keyword">return</span> stringToMap(trimmed, <span class="string">"&amp;"</span>, <span class="string">"="</span>);
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Takes the query part of a URL and returns a JSON
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Takes the query part of a URL and returns a JSON
 object containing the same information.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> getQueryMap = <span class="function"><span class="keyword">function</span><span class="params">(url)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> getQueryMap = <span class="function"><span class="keyword">function</span><span class="params">(url)</span> {</span>
   <span class="keyword">return</span> parseQueryString(getQueryString(url));
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Takes a JSON object (aMap) and returns a new JSON
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Takes a JSON object (aMap) and returns a new JSON
 object with only the desired keys.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> selectKeys = <span class="function"><span class="keyword">function</span> <span class="params">(aMap, desiredKeys)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> selectKeys = <span class="function"><span class="keyword">function</span> <span class="params">(aMap, desiredKeys)</span> {</span>
   <span class="keyword">var</span> result = {};
   <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; desiredKeys.length; ++i) {
     <span class="keyword">var</span> key = desiredKeys[i];
@@ -122,15 +173,23 @@ object with only the desired keys.</p>
     }
   }
   <span class="keyword">return</span> result;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Takes a URL and modifies (or creates) the query part
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Takes a URL and modifies (or creates) the query part
 with data taken from queryMap.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> setQueryMap = <span class="function"><span class="keyword">function</span><span class="params">(url, queryMap)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> setQueryMap = <span class="function"><span class="keyword">function</span><span class="params">(url, queryMap)</span> {</span>
   <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>),
       queryString = <span class="string">"?"</span>;
   parser.href = url;
@@ -139,153 +198,281 @@ with data taken from queryMap.</p>
   }
   parser.search = queryString;
   <span class="keyword">return</span> parser.href;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Takes an array of JSON objects, and returns only those
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Takes an array of JSON objects, and returns only those
 objects whose with the desired value and a given key.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> pickMapsWithTag = <span class="function"><span class="keyword">function</span><span class="params">(arrayOfObjects, key, value)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> pickMapsWithTag = <span class="function"><span class="keyword">function</span><span class="params">(arrayOfObjects, key, value)</span> {</span>
   <span class="keyword">return</span> arrayOfObjects.filter(<span class="function"><span class="keyword">function</span> <span class="params">(datum)</span> {</span> <span class="keyword">return</span> datum[key] == value; });
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Copies a URL string, and, if its protocol is http,
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Copies a URL string, and, if its protocol is http,
 converts it to HTTPS.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> changeToHttps = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> changeToHttps = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
   <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
   parser.href = url;
   <span class="keyword">if</span> (parser.protocol === <span class="string">"http:"</span>) {
     parser.protocol = <span class="string">"https:"</span>;
   }
   <span class="keyword">return</span> parser.href;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Returns true iff the URL string uses the HTTPS protocol.</p>
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Returns true iff the URL string uses the HTTPS protocol.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> isHttps = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> isHttps = <span class="function"><span class="keyword">function</span> <span class="params">(url)</span> {</span>
   <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
   parser.href = url;
   <span class="keyword">return</span> parser.protocol === <span class="string">"https:"</span>;
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <h3 id="youtube-scraping-functions">YouTube-scraping functions</h3>
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="youtube-scraping-functions">YouTube-scraping functions</h3>
 <p>For extracting a URL of an HTML5 video.</p>
 <p>Scrapes useful video location data and signatures from a YouTube page.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> scrapeVideoLocationData = <span class="function"><span class="keyword">function</span> <span class="params">(bodyHTML)</span> {</span></pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre><span class="keyword">var</span> scrapeVideoLocationData = <span class="function"><span class="keyword">function</span> <span class="params">(bodyHTML)</span> {</span></pre></div>
         
-      
-        
-        <p>Location data can be found in JSON object literals inside an inline SCRIPT tag.</p>
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Location data can be found in JSON object literals inside an inline SCRIPT tag.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> pattern = <span class="regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/</span>,</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>  <span class="keyword">var</span> pattern = <span class="regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/</span>,</pre></div>
         
-      
-        
-        <p>A series of literal maps each corresponds to a way to request a different
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>A series of literal maps each corresponds to a way to request a different
 format of the same video.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      sources = bodyHTML.match(pattern)[<span class="number">1</span>].split(<span class="string">","</span>);</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>      sources = bodyHTML.match(pattern)[<span class="number">1</span>].split(<span class="string">","</span>);</pre></div>
         
-      
-        
-        <p>Read the data from these literal maps.</p>
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Read the data from these literal maps.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> sources.map(<span class="function"><span class="keyword">function</span> <span class="params">(source)</span> {</span> <span class="keyword">return</span> stringToMap(source, <span class="string">"\\u0026"</span>, <span class="string">"="</span>); });
+};</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>  <span class="keyword">return</span> sources.map(<span class="function"><span class="keyword">function</span> <span class="params">(source)</span> {</span> <span class="keyword">return</span> stringToMap(source, <span class="string">"\\u0026"</span>, <span class="string">"="</span>); });
-};</pre></div>
         
-      
-        
-        <p>The list of keys needed for a URL that points to an HTML5 version
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>The list of keys needed for a URL that points to an HTML5 version
 of a YouTube video.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> HTML5_KEYS = [<span class="string">'expire'</span>,<span class="string">'fexp'</span>,<span class="string">'id'</span>,<span class="string">'ip'</span>,<span class="string">'ipbits'</span>,<span class="string">'itag'</span>,<span class="string">'key'</span>,<span class="string">'ms'</span>,
+                  <span class="string">'mt'</span>,<span class="string">'mv'</span>,<span class="string">'ratebypass'</span>,<span class="string">'signature'</span>,<span class="string">'source'</span>,<span class="string">'sparams'</span>,<span class="string">'sver'</span>,<span class="string">'upn'</span>];</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre><span class="keyword">var</span> HTML5_KEYS = [<span class="string">'expire'</span>,<span class="string">'fexp'</span>,<span class="string">'id'</span>,<span class="string">'ip'</span>,<span class="string">'ipbits'</span>,<span class="string">'itag'</span>,<span class="string">'key'</span>,<span class="string">'ms'</span>,
-                  <span class="string">'mt'</span>,<span class="string">'mv'</span>,<span class="string">'ratebypass'</span>,<span class="string">'signature'</span>,<span class="string">'source'</span>,<span class="string">'sparams'</span>,<span class="string">'sver'</span>,<span class="string">'upn'</span>];</pre></div>
         
-      
-        
-        <p>Scrape necessary data from the YouTube page to construct a URL
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Scrape necessary data from the YouTube page to construct a URL
 that points to an HTML5 version of the video.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> extractHTML5VideoURL = <span class="function"><span class="keyword">function</span> <span class="params">(bodyHTML)</span> {</span>
+  <span class="keyword">var</span> chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="string">"itag"</span>, <span class="string">"43"</span>)[<span class="number">0</span>],</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre><span class="keyword">var</span> extractHTML5VideoURL = <span class="function"><span class="keyword">function</span> <span class="params">(bodyHTML)</span> {</span>
-  <span class="keyword">var</span> chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="string">"itag"</span>, <span class="string">"43"</span>)[<span class="number">0</span>],</pre></div>
         
-      
-        
-        <p>The &#39;url&#39; tag from chosenVideoItem contains most of the URL we need
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>The &#39;url&#39; tag from chosenVideoItem contains most of the URL we need
 for obtaining the HTML5 video. URL-decode the tag to get a pure
 URL, and ensure it uses HTTPS.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>      url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),</pre></div>
         
-      
-        
-        <p>Read the tags from this URL, in turn.</p>
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Read the tags from this URL, in turn.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      tags = getQueryMap(url);</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>      tags = getQueryMap(url);</pre></div>
         
-      
-        
-        <p>The sig tag is necessary to obtain the video. Key name changes
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>The sig tag is necessary to obtain the video. Key name changes
 from sig to signature.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  tags.signature = chosenVideoItem.sig;</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>  tags.signature = chosenVideoItem.sig;</pre></div>
         
-      
-        
-        <p>Return a URL that has just the tags we need and no others.</p>
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Return a URL that has just the tags we need and no others.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> setQueryMap(url, selectKeys(tags, HTML5_KEYS));
+};</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>  <span class="keyword">return</span> setQueryMap(url, selectKeys(tags, HTML5_KEYS));
-};</pre></div>
         
-      
-        
-        <h3 id="mutating-the-youtube-page-">Mutating the YouTube page.</h3>
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="mutating-the-youtube-page-">Mutating the YouTube page.</h3>
 <p>Embed the video element in the YouTube page and return a reference to it.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> embedVideo = <span class="function"><span class="keyword">function</span> <span class="params">(html5VideoURL)</span> {</span></pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre><span class="keyword">var</span> embedVideo = <span class="function"><span class="keyword">function</span> <span class="params">(html5VideoURL)</span> {</span></pre></div>
         
-      
-        
-        <p>Place it in the old playerAPI box.</p>
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Place it in the old playerAPI box.</p>
 
-        
-          <div class='highlight'><pre>  <span class="keyword">var</span> playerAPI = document.querySelector(<span class="string">"div#player-api"</span>);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> playerAPI = document.querySelector(<span class="string">"div#player-api"</span>);
   playerAPI.style.position = <span class="string">"relative"</span>;
   playerAPI.innerHTML = <span class="string">'&lt;div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"&gt; \
                         &lt;video id="unscripted" src="'</span> + html5VideoURL + <span class="string">'" style="width: 100%; height: 100%" controls&gt;&lt;/video&gt; \
                         &lt;/div&gt;'</span>;
   <span class="keyword">return</span> document.querySelector(<span class="string">'video#unscripted'</span>);
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Restore the thumbnail images that inexplicably need JavaScript to be visible.</p>
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Restore the thumbnail images that inexplicably need JavaScript to be visible.</p>
 
-        
-          <div class='highlight'><pre><span class="keyword">var</span> restoreThumbnailImages = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> restoreThumbnailImages = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
   <span class="keyword">var</span> images = document.querySelectorAll(<span class="string">'span.yt-thumb-clip img'</span>);
   <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; images.length; ++i) {
     <span class="keyword">var</span> image = images[i];
@@ -293,71 +480,127 @@ from sig to signature.</p>
       image.src = image.getAttribute(<span class="string">'data-thumb'</span>);
     }
   }
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <h3 id="the-main-function">The main function</h3>
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h3 id="the-main-function">The main function</h3>
 <p>Alter the YouTube page to show its video without needing the page&#39;s JavaScript.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> noScriptYouTube = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre><span class="keyword">var</span> noScriptYouTube = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div>
         
-      
-        
-        <p>Let&#39;s always use HTTPS in this script, to be safer.
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Let&#39;s always use HTTPS in this script, to be safer.
 Redundant if user uses the HTTPSEverywhere plugin.</p>
 
-        
-          <div class='highlight'><pre>   <span class="keyword">if</span> (!isHttps(location.href)) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>   <span class="keyword">if</span> (!isHttps(location.href)) {
      location.href = changeToHttps(location.href);
    }
    <span class="keyword">try</span> {
-     <span class="keyword">var</span> html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);</pre></div>
+     <span class="keyword">var</span> html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Swap old video for new HTML5 video.</p>
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Swap old video for new HTML5 video.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>     <span class="keyword">var</span> video = embedVideo(html5VideoURL);</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>     <span class="keyword">var</span> video = embedVideo(html5VideoURL);</pre></div>
         
-      
-        
-        <p>Play the video immediately, just as YouTube does.</p>
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Play the video immediately, just as YouTube does.</p>
 
-        
-          <div class='highlight'><pre>     video.play();
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>     video.play();
    } <span class="keyword">catch</span> (e) {
-     console.log(e);</pre></div>
+     console.log(e);</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Never mind.</p>
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Never mind.</p>
 
-        
-          <div class='highlight'><pre>   }
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>   }
    restoreThumbnailImages();
-};</pre></div>
+};</pre></div></div>
+            
+        </li>
         
-      
         
-        <p>Run the main function to immediately make YouTube page work even if the
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Run the main function to immediately make YouTube page work even if the
 page&#39;s JavaScript is disabled.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>noScriptYouTube();</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>noScriptYouTube();</pre></div>
         
-      
-        
-        <p>Terminate enclosing function.</p>
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Terminate enclosing function.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>})();</pre></div></div>
+            
+        </li>
         
-          <div class='highlight'><pre>})();</pre></div>
-        
-      
-      <div class="fleur">h</div>
-    </div>
+    </ul>
   </div>
 </body>
 </html>
