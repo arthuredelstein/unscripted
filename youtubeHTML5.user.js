@@ -1,10 +1,10 @@
-// # YouTube Unscripted
+// # Unscripted
 
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
 // This user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) extension
-// lets you view videos on YouTube pages even if Flash and the page's JavaScript is disabled. In particular, I hope this
-// script is useful for the Tor Browser Bundle.
+// lets you view videos on YouTube pages and photos on Flickr pages, even if Flash and the page's JavaScript is disabled.
+// I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
 // or [downloaded from github](https://github.com/arthuredelstein/unscripted).
@@ -18,6 +18,8 @@
 // @description run html5 video on youtube
 // @include     https://www.youtube.com/*
 // @include     http://www.youtube.com/*
+// @include     http://*.flickr.com/*
+// @include     https://*.flickr.com/*
 // @version     1
 // @grant       none
 // ==/UserScript==
@@ -70,19 +72,6 @@ var getQueryMap = function(url) {
   return parseQueryString(getQueryString(url));
 };
 
-// Takes a JSON object (aMap) and returns a new JSON
-// object with only the desired keys.
-var selectKeys = function (aMap, desiredKeys) {
-  var result = {};
-  for (var i = 0; i < desiredKeys.length; ++i) {
-    var key = desiredKeys[i];
-    if (aMap.hasOwnProperty(key)) {
-      result[key] = aMap[key];
-    }
-  }
-  return result;
-};
-
 // Takes a URL and modifies (or creates) the query part
 // with data taken from queryMap.
 var setQueryMap = function(url, queryMap) {
@@ -120,6 +109,26 @@ var isHttps = function (url) {
   return parser.protocol === "https:";
 };
 
+// ### Mutating web pages.
+
+// Restore deferred thumbnail images that inexplicably need JavaScript to be visible.                                                                                                                      
+
+var restoreThumbnailImages = function (thumbnailSelector, deferredSrcAttribute) {
+  var images = document.querySelectorAll(thumbnailSelector);
+  for (var i = 0; i < images.length; ++i) {
+    var image = images[i];
+    if (image.hasAttribute(deferredSrcAttribute)) {
+      image.src = image.getAttribute(deferredSrcAttribute);
+    }
+  }
+};
+
+// ### Flickr fix
+
+var fixFlickr = function () {
+  restoreThumbnailImages('img.defer', 'data-defer-src');
+};
+
 // ### YouTube-scraping functions
 // For extracting a URL of an HTML5 video.
 
@@ -134,11 +143,6 @@ var scrapeVideoLocationData = function (bodyHTML) {
   return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
 };
 
-// The list of keys needed for a URL that points to an HTML5 version
-// of a YouTube video.
-var HTML5_KEYS = ['expire','fexp','id','ip','ipbits','itag','key','ms',
-                  'mt','mv','ratebypass','signature','source','sparams','sver','upn'];
-
 // Scrape necessary data from the YouTube page to construct a URL
 // that points to an HTML5 version of the video.
 var extractHTML5VideoURL = function (bodyHTML) {
@@ -149,11 +153,10 @@ var extractHTML5VideoURL = function (bodyHTML) {
       url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),
       // Read the tags from this URL, in turn.
       tags = getQueryMap(url);
-  // The sig tag is necessary to obtain the video. Key name changes
-  // from sig to signature.
-  tags.signature = chosenVideoItem.sig;
-  // Return a URL that has just the tags we need and no others.
-  return setQueryMap(url, selectKeys(tags, HTML5_KEYS));
+  // The signature / sig tag is necessary to obtain the video.
+  tags.signature = tags.signature || chosenVideoItem.signature || chosenVideoItem.sig;
+  // Return a URL that has the full complement of tags.
+  return setQueryMap(url, tags);
 };
 
 // ### Mutating the YouTube page.
@@ -167,17 +170,6 @@ var embedVideo = function (html5VideoURL) {
                         <video id="unscripted" src="' + html5VideoURL + '" style="width: 100%; height: 100%" controls></video> \
                         </div>';
   return document.querySelector('video#unscripted');
-};
-
-// Restore the thumbnail images that inexplicably need JavaScript to be visible.
-var restoreThumbnailImages = function () {
-  var images = document.querySelectorAll('span.yt-thumb-clip img');
-  for (var i = 0; i < images.length; ++i) {
-    var image = images[i];
-    if (image.hasAttribute('data-thumb')) {
-      image.src = image.getAttribute('data-thumb');
-    }
-  }
 };
 
 // ### The main function
@@ -199,12 +191,17 @@ var noScriptYouTube = function() {
      console.log(e);
      // Never mind.
    }
-   restoreThumbnailImages();
+   restoreThumbnailImages('span.yt-thumb-clip img', 'data-thumb');
 };
 
 // Run the main function to immediately make YouTube page work even if the
 // page's JavaScript is disabled.
-noScriptYouTube();
 
+if (location.href.contains('youtube.com')) {
+  noScriptYouTube();
+}
+if (location.href.contains('flickr.com')) {
+  fixFlickr();
+}
 // Terminate enclosing function.
 })();
