@@ -106,7 +106,8 @@ or <a href="https://github.com/arthuredelstein/unscripted">downloaded from githu
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-comment">/*jshint multistr: true */</span></pre></div></div>
+<span class="hljs-comment">/*jshint multistr: true */</span>
+<span class="hljs-comment">/*jshint esnext: true */</span></pre></div></div>
             
         </li>
         
@@ -155,13 +156,13 @@ would require pairSep = “,” and kvSep = “:”.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> stringToMap = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(string, pairSep, kvSep)</span> </span>{
-  <span class="hljs-keyword">var</span> pairs = string.split(pairSep).map(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(kv)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> stringToMap = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(string, pairSep, kvSep)</span> </span>{
+  <span class="hljs-keyword">let</span> pairs = string.split(pairSep).map(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(kv)</span> </span>{
     <span class="hljs-keyword">return</span> kv.split(kvSep);
   });
-  <span class="hljs-keyword">var</span> result = {};
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; pairs.length; ++i) {
-    <span class="hljs-keyword">var</span> pair = pairs[i];
+  <span class="hljs-keyword">let</span> result = {};
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; pairs.length; ++i) {
+    <span class="hljs-keyword">let</span> pair = pairs[i];
     result[pair[<span class="hljs-number">0</span>]] = pair[<span class="hljs-number">1</span>];
   }
   <span class="hljs-keyword">return</span> result;
@@ -181,8 +182,8 @@ initial ‘?’.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> getQueryString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
-  <span class="hljs-keyword">var</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> getQueryString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
+  <span class="hljs-keyword">let</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
   parser.href = url;
   <span class="hljs-keyword">return</span> parser.search;
 };</pre></div></div>
@@ -201,8 +202,8 @@ it to a map.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> parseQueryString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(queryString)</span> </span>{
-  <span class="hljs-keyword">var</span> trimmed = queryString.replace(<span class="hljs-regexp">/^\?/</span>,<span class="hljs-string">""</span>);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> parseQueryString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(queryString)</span> </span>{
+  <span class="hljs-keyword">let</span> trimmed = queryString.replace(<span class="hljs-regexp">/^\?/</span>,<span class="hljs-string">""</span>);
   <span class="hljs-keyword">return</span> stringToMap(trimmed, <span class="hljs-string">"&amp;"</span>, <span class="hljs-string">"="</span>);
 };</pre></div></div>
             
@@ -220,7 +221,7 @@ object containing the same information.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> getQueryMap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> getQueryMap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url)</span> </span>{
   <span class="hljs-keyword">return</span> parseQueryString(getQueryString(url));
 };</pre></div></div>
             
@@ -238,11 +239,11 @@ with data taken from queryMap.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> setQueryMap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url, queryMap)</span> </span>{
-  <span class="hljs-keyword">var</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>),
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> setQueryMap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url, queryMap)</span> </span>{
+  <span class="hljs-keyword">let</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>),
       queryString = <span class="hljs-string">"?"</span>;
   parser.href = url;
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> queryMap) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> queryMap) {
     queryString += key + <span class="hljs-string">"="</span> + queryMap[key] + <span class="hljs-string">"&amp;"</span>;
   }
   parser.search = queryString;
@@ -263,7 +264,7 @@ objects whose with the desired value and a given key.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> pickMapsWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(arrayOfObjects, key, value)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> pickMapsWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(arrayOfObjects, key, value)</span> </span>{
   <span class="hljs-keyword">return</span> arrayOfObjects.filter(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(datum)</span> </span>{ <span class="hljs-keyword">return</span> datum[key] == value; });
 };</pre></div></div>
             
@@ -281,8 +282,8 @@ converts it to HTTPS.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> changeToHttps = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
-  <span class="hljs-keyword">var</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> changeToHttps = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
+  <span class="hljs-keyword">let</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
   parser.href = url;
   <span class="hljs-keyword">if</span> (parser.protocol === <span class="hljs-string">"http:"</span>) {
     parser.protocol = <span class="hljs-string">"https:"</span>;
@@ -303,8 +304,8 @@ converts it to HTTPS.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> isHttps = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
-  <span class="hljs-keyword">var</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> isHttps = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
+  <span class="hljs-keyword">let</span> parser = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
   parser.href = url;
   <span class="hljs-keyword">return</span> parser.protocol === <span class="hljs-string">"https:"</span>;
 };</pre></div></div>
@@ -359,7 +360,7 @@ work correctly.                                                                 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> flickr = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+<span class="hljs-keyword">let</span> flickr = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
   restoreAttribute(<span class="hljs-string">'img.defer'</span>, <span class="hljs-string">'data-defer-src'</span>, <span class="hljs-string">'src'</span>);
 };</pre></div></div>
             
@@ -377,7 +378,7 @@ work correctly.                                                                 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> twitter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+<span class="hljs-keyword">let</span> twitter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
   restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-expanded-url"</span>, <span class="hljs-string">"href"</span>);
   restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-resolved-url-large"</span>, <span class="hljs-string">"href"</span>);
 };</pre></div></div>
@@ -409,7 +410,7 @@ work correctly.                                                                 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> scrapeVideoLocationData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> scrapeVideoLocationData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -424,7 +425,7 @@ work correctly.                                                                 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> pattern = <span class="hljs-regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> pattern = <span class="hljs-regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/</span>,</pre></div></div>
             
         </li>
         
@@ -472,8 +473,8 @@ that points to an HTML5 version of the video.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> extractHTML5VideoURL = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{
-  <span class="hljs-keyword">var</span> chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="hljs-string">"itag"</span>, <span class="hljs-string">"43"</span>)[<span class="hljs-number">0</span>],</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> extractHTML5VideoURL = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{
+  <span class="hljs-keyword">let</span> chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), <span class="hljs-string">"itag"</span>, <span class="hljs-string">"43"</span>)[<span class="hljs-number">0</span>],</pre></div></div>
             
         </li>
         
@@ -564,7 +565,7 @@ URL, and ensure it uses HTTPS.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> embedVideo = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(html5VideoURL)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> embedVideo = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(html5VideoURL)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -579,7 +580,7 @@ URL, and ensure it uses HTTPS.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> playerAPI = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">"div#player-api"</span>);
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> playerAPI = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">"div#player-api"</span>);
   playerAPI.style.position = <span class="hljs-string">"relative"</span>;
   playerAPI.innerHTML = <span class="hljs-string">'&lt;div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"&gt; \
                         &lt;video id="unscripted" src="'</span> + html5VideoURL + <span class="hljs-string">'" style="width: 100%; height: 100%" controls&gt;&lt;/video&gt; \
@@ -613,7 +614,7 @@ URL, and ensure it uses HTTPS.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> youtube = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> youtube = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
         
@@ -633,7 +634,7 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
      location.href = changeToHttps(location.href);
    }
    <span class="hljs-keyword">try</span> {
-     <span class="hljs-keyword">var</span> html5VideoURL = extractHTML5VideoURL(<span class="hljs-built_in">document</span>.body.innerHTML);</pre></div></div>
+     <span class="hljs-keyword">let</span> html5VideoURL = extractHTML5VideoURL(<span class="hljs-built_in">document</span>.body.innerHTML);</pre></div></div>
             
         </li>
         
@@ -648,7 +649,7 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>     <span class="hljs-keyword">var</span> video = embedVideo(html5VideoURL);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>     <span class="hljs-keyword">let</span> video = embedVideo(html5VideoURL);</pre></div></div>
             
         </li>
         

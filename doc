@@ -1,1 +1,2 @@
+#!/usr/bin/env bash
 docco --layout=parallel youtubeHTML5.user.js
