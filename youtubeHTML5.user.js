@@ -16,10 +16,12 @@
 // @name        youtubeHTML5
 // @namespace   arthuredelstein.com
 // @description run html5 video on youtube
-// @include     https://www.youtube.com/*
 // @include     http://www.youtube.com/*
+// @include     https://www.youtube.com/*
 // @include     http://*.flickr.com/*
 // @include     https://*.flickr.com/*
+// @include     http://*.twitter.com/*
+// @include     https://*.twitter.com/*
 // @version     1
 // @grant       none
 // ==/UserScript==
@@ -201,8 +203,7 @@ let youtube = function() {
    restoreThumbnailImages('span.yt-thumb-clip img', 'data-thumb');
 };
 
-// Run the main function to immediately make YouTube page work even if the
-// page's JavaScript is disabled.
+// Run the main function to immediately bring web page to heel.
 
 if (location.href.contains('youtube.com')) {
   youtube();
