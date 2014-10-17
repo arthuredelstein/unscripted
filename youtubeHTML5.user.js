@@ -200,7 +200,7 @@ let youtube = function() {
      console.log(e);
      // Never mind.
    }
-   restoreThumbnailImages('span.yt-thumb-clip img', 'data-thumb');
+   restoreAttribute('img', 'data-thumb', 'src');
 };
 
 // Run the main function to immediately bring web page to heel.
