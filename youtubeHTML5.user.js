@@ -111,22 +111,28 @@ var isHttps = function (url) {
 
 // ### Mutating web pages.
 
-// Restore deferred thumbnail images that inexplicably need JavaScript to be visible.                                                                                                                      
+// Restore images, links, or other elements that ordinarily need JavaScript to
+// work correctly.                                                                                                                     
 
-var restoreThumbnailImages = function (thumbnailSelector, deferredSrcAttribute) {
-  var images = document.querySelectorAll(thumbnailSelector);
-  for (var i = 0; i < images.length; ++i) {
-    var image = images[i];
-    if (image.hasAttribute(deferredSrcAttribute)) {
-      image.src = image.getAttribute(deferredSrcAttribute);
+let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttribute) {
+  Array.prototype.forEach.call(document.querySelectorAll(thumbnailSelector), element => {
+    if (element.hasAttribute(sourceAttribute)) {
+      element.setAttribute(targetAttribute, element.getAttribute(sourceAttribute));
     }
-  }
+  });
 };
 
 // ### Flickr fix
 
-var fixFlickr = function () {
-  restoreThumbnailImages('img.defer', 'data-defer-src');
+var flickr = function () {
+  restoreAttribute('img.defer', 'data-defer-src', 'src');
+};
+
+// ### Twitter fix
+
+var twitter = function () {
+  restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
+  restoreAttribute("a.twitter-timeline-link", "data-resolved-url-large", "href");
 };
 
 // ### YouTube-scraping functions
@@ -175,7 +181,7 @@ var embedVideo = function (html5VideoURL) {
 // ### The main function
 
 // Alter the YouTube page to show its video without needing the page's JavaScript.
-var noScriptYouTube = function() {
+var youtube = function() {
    // Let's always use HTTPS in this script, to be safer.
    // Redundant if user uses the HTTPSEverywhere plugin.
    if (!isHttps(location.href)) {
@@ -198,10 +204,14 @@ var noScriptYouTube = function() {
 // page's JavaScript is disabled.
 
 if (location.href.contains('youtube.com')) {
-  noScriptYouTube();
+  youtube();
 }
 if (location.href.contains('flickr.com')) {
-  fixFlickr();
+  flickr();
 }
+if (location.href.contains('twitter.com')) {
+  twitter();
+}
+
 // Terminate enclosing function.
 })();
