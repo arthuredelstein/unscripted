@@ -3,7 +3,7 @@
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
 // This user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) extension
-// lets you view videos on YouTube pages and photos on Flickr pages, even if Flash and the page's JavaScript is disabled.
+// lets you view videos on YouTube pages, even if Flash and the page's JavaScript is disabled.
 // I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
@@ -18,12 +18,12 @@
 // @description run html5 video on youtube
 // @include     http://www.youtube.com/*
 // @include     https://www.youtube.com/*
-// @include     http://*.flickr.com/*
-// @include     https://*.flickr.com/*
+// @include     http://twitter.com/*
+// @include     https://twitter.com/*
 // @include     http://*.twitter.com/*
 // @include     https://*.twitter.com/*
 // @version     1
-// @grant       none
+// @grant       GM_xmlhttpRequest
 // ==/UserScript==
 // </pre>
 
@@ -36,6 +36,10 @@
 "use strict";
 
 // ### Utility functions (all referentially transparent)
+
+
+// Returns the last item in an array-like object.
+let last = array => Array.prototype.slice.call(array, -1)[0];
 
 // Takes a string representing a key->value map, and parses
 // it, given the expected string separating key-value pairs,
@@ -127,15 +131,34 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
 
 // ### Flickr fix
 
-let flickr = function () {
-  restoreAttribute('img.defer', 'data-defer-src', 'src');
-};
+//let flickr = function () {
+//  restoreAttribute('img.defer', 'data-defer-src', 'src');
+//};
 
 // ### Twitter fix
-
-let twitter = function () {
+// TODO: Get this working for various kinds of streams (login, person, search, etc)
+let twitter_cleanup = function() {
   restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
   restoreAttribute("a.twitter-timeline-link", "data-resolved-url-large", "href");
+};
+
+let twitter_footer = function () {
+  let itemList = document.querySelector("div.GridTimeline-items"),
+      lastItemID = itemList.getAttribute("data-max-id"),
+      nextItemsURL = "https://twitter.com/i/profiles/show/NickKristof/timeline?max_id=" + lastItemID;
+  GM_xmlhttpRequest({
+    method: "GET",
+    url: nextItemsURL,
+    onload: function (response) {
+      itemList.insertAdjacentHTML('beforeend', JSON.parse(response.responseText).items_html);
+      twitter_cleanup();
+    }
+  });
+};
+
+let twitter = function () {
+  twitter_cleanup();
+  twitter_footer();
 };
 
 // ### YouTube-scraping functions
@@ -208,9 +231,9 @@ let youtube = function() {
 if (location.href.contains('youtube.com')) {
   youtube();
 }
-if (location.href.contains('flickr.com')) {
-  flickr();
-}
+//if (location.href.contains('flickr.com')) {
+//  flickr();
+//}
 if (location.href.contains('twitter.com')) {
   twitter();
 }
