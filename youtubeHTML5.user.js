@@ -26,6 +26,7 @@
 // </pre>
 
 /*jshint multistr: true */
+/*jshint esnext: true */
 
 // Enclose all in a function to avoid polluting the
 // global namespace.
@@ -39,13 +40,13 @@
 // and the separator between each key and value.
 // For example, JSON maps (stripped of their curly braces)
 // would require pairSep = "," and kvSep = ":".
-var stringToMap = function (string, pairSep, kvSep) {
-  var pairs = string.split(pairSep).map(function (kv) {
+let stringToMap = function (string, pairSep, kvSep) {
+  let pairs = string.split(pairSep).map(function (kv) {
     return kv.split(kvSep);
   });
-  var result = {};
-  for (var i = 0; i < pairs.length; ++i) {
-    var pair = pairs[i];
+  let result = {};
+  for (let i = 0; i < pairs.length; ++i) {
+    let pair = pairs[i];
     result[pair[0]] = pair[1];
   }
   return result;
@@ -53,32 +54,32 @@ var stringToMap = function (string, pairSep, kvSep) {
 
 // Returns the query string from a URL, including the
 // initial '?'.
-var getQueryString = function (url) {
-  var parser = document.createElement('a');
+let getQueryString = function (url) {
+  let parser = document.createElement('a');
   parser.href = url;
   return parser.search;
 };
 
 // Reads the query ("search") part of a URL and converts
 // it to a map.
-var parseQueryString = function (queryString) {
-  var trimmed = queryString.replace(/^\?/,"");
+let parseQueryString = function (queryString) {
+  let trimmed = queryString.replace(/^\?/,"");
   return stringToMap(trimmed, "&", "=");
 };
 
 // Takes the query part of a URL and returns a JSON
 // object containing the same information.
-var getQueryMap = function(url) {
+let getQueryMap = function(url) {
   return parseQueryString(getQueryString(url));
 };
 
 // Takes a URL and modifies (or creates) the query part
 // with data taken from queryMap.
-var setQueryMap = function(url, queryMap) {
-  var parser = document.createElement('a'),
+let setQueryMap = function(url, queryMap) {
+  let parser = document.createElement('a'),
       queryString = "?";
   parser.href = url;
-  for (var key in queryMap) {
+  for (let key in queryMap) {
     queryString += key + "=" + queryMap[key] + "&";
   }
   parser.search = queryString;
@@ -87,14 +88,14 @@ var setQueryMap = function(url, queryMap) {
 
 // Takes an array of JSON objects, and returns only those
 // objects whose with the desired value and a given key.
-var pickMapsWithTag = function(arrayOfObjects, key, value) {
+let pickMapsWithTag = function(arrayOfObjects, key, value) {
   return arrayOfObjects.filter(function (datum) { return datum[key] == value; });
 };
 
 // Copies a URL string, and, if its protocol is http,
 // converts it to HTTPS.
-var changeToHttps = function (url) {
-  var parser = document.createElement('a');
+let changeToHttps = function (url) {
+  let parser = document.createElement('a');
   parser.href = url;
   if (parser.protocol === "http:") {
     parser.protocol = "https:";
@@ -103,8 +104,8 @@ var changeToHttps = function (url) {
 };
 
 // Returns true iff the URL string uses the HTTPS protocol.
-var isHttps = function (url) {
-  var parser = document.createElement('a');
+let isHttps = function (url) {
+  let parser = document.createElement('a');
   parser.href = url;
   return parser.protocol === "https:";
 };
@@ -124,13 +125,13 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
 
 // ### Flickr fix
 
-var flickr = function () {
+let flickr = function () {
   restoreAttribute('img.defer', 'data-defer-src', 'src');
 };
 
 // ### Twitter fix
 
-var twitter = function () {
+let twitter = function () {
   restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
   restoreAttribute("a.twitter-timeline-link", "data-resolved-url-large", "href");
 };
@@ -139,9 +140,9 @@ var twitter = function () {
 // For extracting a URL of an HTML5 video.
 
 // Scrapes useful video location data and signatures from a YouTube page.
-var scrapeVideoLocationData = function (bodyHTML) {
+let scrapeVideoLocationData = function (bodyHTML) {
   // Location data can be found in JSON object literals inside an inline SCRIPT tag.
-  var pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
+  let pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
       // A series of literal maps each corresponds to a way to request a different
       // format of the same video.
       sources = bodyHTML.match(pattern)[1].split(",");
@@ -151,8 +152,8 @@ var scrapeVideoLocationData = function (bodyHTML) {
 
 // Scrape necessary data from the YouTube page to construct a URL
 // that points to an HTML5 version of the video.
-var extractHTML5VideoURL = function (bodyHTML) {
-  var chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
+let extractHTML5VideoURL = function (bodyHTML) {
+  let chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
       // The 'url' tag from chosenVideoItem contains most of the URL we need
       // for obtaining the HTML5 video. URL-decode the tag to get a pure
       // URL, and ensure it uses HTTPS.
@@ -168,9 +169,9 @@ var extractHTML5VideoURL = function (bodyHTML) {
 // ### Mutating the YouTube page.
 
 // Embed the video element in the YouTube page and return a reference to it.
-var embedVideo = function (html5VideoURL) {
+let embedVideo = function (html5VideoURL) {
   // Place it in the old playerAPI box.
-  var playerAPI = document.querySelector("div#player-api");
+  let playerAPI = document.querySelector("div#player-api");
   playerAPI.style.position = "relative";
   playerAPI.innerHTML = '<div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"> \
                         <video id="unscripted" src="' + html5VideoURL + '" style="width: 100%; height: 100%" controls></video> \
@@ -181,16 +182,16 @@ var embedVideo = function (html5VideoURL) {
 // ### The main function
 
 // Alter the YouTube page to show its video without needing the page's JavaScript.
-var youtube = function() {
+let youtube = function() {
    // Let's always use HTTPS in this script, to be safer.
    // Redundant if user uses the HTTPSEverywhere plugin.
    if (!isHttps(location.href)) {
      location.href = changeToHttps(location.href);
    }
    try {
-     var html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
+     let html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
      // Swap old video for new HTML5 video.
-     var video = embedVideo(html5VideoURL);
+     let video = embedVideo(html5VideoURL);
      // Play the video immediately, just as YouTube does.
      video.play();
    } catch (e) {
