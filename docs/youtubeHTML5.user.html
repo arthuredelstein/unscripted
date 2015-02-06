@@ -48,8 +48,14 @@
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>This user-script for Firefox’s <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">Greasemonkey</a> extension
-lets you view videos on YouTube pages and photos on Flickr pages, even if Flash and the page’s JavaScript is disabled.
-I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.</p>
+lets you use popular web pages, even if Flash and the page’s JavaScript is disabled.
+Supported sites include:</p>
+<ul>
+<li>youtube.com</li>
+<li>baidu.com</li>
+<li>twitter.com (in progress)
+I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.</li>
+</ul>
 
             </div>
             
@@ -94,12 +100,16 @@ or <a href="https://github.com/arthuredelstein/unscripted">downloaded from githu
 @name        youtubeHTML5
 @namespace   arthuredelstein.com
 @description run html5 video on youtube
-@include     https://www.youtube.com/*
 @include     http://www.youtube.com/*
-@include     http://*.flickr.com/*
-@include     https://*.flickr.com/*
+@include     https://www.youtube.com/*
+@include     http://twitter.com/*
+@include     https://twitter.com/*
+@include     http://*.twitter.com/*
+@include     https://*.twitter.com/*
+@include     http://*.baidu.com/*
+@include     https://*.baidu.com/*
 @version     1
-@grant       none
+@grant       GM_xmlhttpRequest
 ==/UserScript==
 </pre>
 
@@ -355,13 +365,12 @@ work correctly.                                                                 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h3 id="flickr-fix">Flickr fix</h3>
+              <h3 id="baidu">Baidu</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">let</span> flickr = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-  restoreAttribute(<span class="hljs-string">'img.defer'</span>, <span class="hljs-string">'data-defer-src'</span>, <span class="hljs-string">'src'</span>);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> baidu = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  restoreAttribute(<span class="hljs-string">'img'</span>, <span class="hljs-string">'data-src'</span>, <span class="hljs-string">'src'</span>);
 };</pre></div></div>
             
         </li>
@@ -373,15 +382,9 @@ work correctly.                                                                 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <h3 id="twitter-fix">Twitter fix</h3>
+              <h3 id="flickr-dead-">Flickr (dead)</h3>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">let</span> twitter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-  restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-expanded-url"</span>, <span class="hljs-string">"href"</span>);
-  restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-resolved-url-large"</span>, <span class="hljs-string">"href"</span>);
-};</pre></div></div>
             
         </li>
         
@@ -392,8 +395,9 @@ work correctly.                                                                 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <h3 id="youtube-scraping-functions">YouTube-scraping functions</h3>
-<p>For extracting a URL of an HTML5 video.</p>
+              <p>let flickr = function () {
+ restoreAttribute(‘img.defer’, ‘data-defer-src’, ‘src’);
+};</p>
 
             </div>
             
@@ -406,11 +410,34 @@ work correctly.                                                                 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Scrapes useful video location data and signatures from a YouTube page.</p>
+              <h3 id="twitter-incomplete-">Twitter (incomplete)</h3>
+<p>TODO: Get this working for various kinds of streams (login, person, search, etc)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> scrapeVideoLocationData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> twitter_cleanup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-expanded-url"</span>, <span class="hljs-string">"href"</span>);
+  restoreAttribute(<span class="hljs-string">"a.twitter-timeline-link"</span>, <span class="hljs-string">"data-resolved-url-large"</span>, <span class="hljs-string">"href"</span>);
+};
+
+<span class="hljs-keyword">let</span> twitter_footer = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">let</span> itemList = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">"div.GridTimeline-items"</span>),
+      lastItemID = itemList.getAttribute(<span class="hljs-string">"data-max-id"</span>),
+      nextItemsURL = <span class="hljs-string">"https://twitter.com/i/profiles/show/NickKristof/timeline?max_id="</span> + lastItemID;
+  GM_xmlhttpRequest({
+    method: <span class="hljs-string">"GET"</span>,
+    url: nextItemsURL,
+    onload: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+      itemList.insertAdjacentHTML(<span class="hljs-string">'beforeend'</span>, <span class="hljs-built_in">JSON</span>.parse(response.responseText).items_html);
+      twitter_cleanup();
+    }
+  });
+};
+
+<span class="hljs-keyword">let</span> twitter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  twitter_cleanup();
+  twitter_footer();
+};</pre></div></div>
             
         </li>
         
@@ -421,11 +448,10 @@ work correctly.                                                                 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Location data can be found in JSON object literals inside an inline SCRIPT tag.</p>
+              <h3 id="youtube">YouTube</h3>
+<p>For extracting a URL of an HTML5 video.</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> pattern = <span class="hljs-regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/</span>,</pre></div></div>
             
         </li>
         
@@ -435,6 +461,36 @@ work correctly.                                                                 
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Scrapes useful video location data and signatures from a YouTube page.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> scrapeVideoLocationData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(bodyHTML)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Location data can be found in JSON object literals inside an inline SCRIPT tag.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> pattern = <span class="hljs-regexp">/\"url\_encoded\_fmt\_stream\_map\"\:\ ?\"(.*?)\"/</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>A series of literal maps each corresponds to a way to request a different
 format of the same video.</p>
@@ -446,11 +502,11 @@ format of the same video.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Read the data from these literal maps.</p>
 
@@ -462,11 +518,11 @@ format of the same video.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Scrape necessary data from the YouTube page to construct a URL
 that points to an HTML5 version of the video.</p>
@@ -479,11 +535,11 @@ that points to an HTML5 version of the video.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>The ‘url’ tag from chosenVideoItem contains most of the URL we need
 for obtaining the HTML5 video. URL-decode the tag to get a pure
@@ -496,11 +552,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Read the tags from this URL, in turn.</p>
 
@@ -511,11 +567,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>The signature / sig tag is necessary to obtain the video.</p>
 
@@ -526,11 +582,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Return a URL that has the full complement of tags.</p>
 
@@ -542,11 +598,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h3 id="mutating-the-youtube-page-">Mutating the YouTube page.</h3>
 
@@ -555,11 +611,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Embed the video element in the YouTube page and return a reference to it.</p>
 
@@ -570,11 +626,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Place it in the old playerAPI box.</p>
 
@@ -591,11 +647,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h3 id="the-main-function">The main function</h3>
 
@@ -604,11 +660,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Alter the YouTube page to show its video without needing the page’s JavaScript.</p>
 
@@ -619,11 +675,11 @@ URL, and ensure it uses HTTPS.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Let’s always use HTTPS in this script, to be safer.
 Redundant if user uses the HTTPSEverywhere plugin.</p>
@@ -639,11 +695,11 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Swap old video for new HTML5 video.</p>
 
@@ -654,11 +710,11 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Play the video immediately, just as YouTube does.</p>
 
@@ -671,31 +727,30 @@ Redundant if user uses the HTTPSEverywhere plugin.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Never mind.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>   }
-   restoreThumbnailImages(<span class="hljs-string">'span.yt-thumb-clip img'</span>, <span class="hljs-string">'data-thumb'</span>);
+   restoreAttribute(<span class="hljs-string">'img'</span>, <span class="hljs-string">'data-thumb'</span>, <span class="hljs-string">'src'</span>);
 };</pre></div></div>
             
         </li>
         
         
-        <li id="section-40">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
-              <p>Run the main function to immediately make YouTube page work even if the
-page’s JavaScript is disabled.</p>
+              <p>Run the main function to immediately bring web page to heel.</p>
 
             </div>
             
@@ -703,21 +758,37 @@ page’s JavaScript is disabled.</p>
 <span class="hljs-keyword">if</span> (location.href.contains(<span class="hljs-string">'youtube.com'</span>)) {
   youtube();
 }
-<span class="hljs-keyword">if</span> (location.href.contains(<span class="hljs-string">'flickr.com'</span>)) {
-  flickr();
-}
-<span class="hljs-keyword">if</span> (location.href.contains(<span class="hljs-string">'twitter.com'</span>)) {
+<span class="hljs-keyword">if</span> (location.href.contains(<span class="hljs-string">'baidu.com'</span>)) {
+  baidu();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>if (location.href.contains(‘flickr.com’)) {
+ flickr();
+}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">if</span> (location.href.contains(<span class="hljs-string">'twitter.com'</span>)) {
   twitter();
 }</pre></div></div>
             
         </li>
         
         
-        <li id="section-41">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Terminate enclosing function.</p>
 
