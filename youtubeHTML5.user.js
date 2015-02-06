@@ -3,7 +3,11 @@
 // by Arthur Edelstein, 2014. [BSD 3-Clause License.](http://opensource.org/licenses/BSD-3-Clause)
 
 // This user-script for Firefox's [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) extension
-// lets you view videos on YouTube pages, even if Flash and the page's JavaScript is disabled.
+// lets you use popular web pages, even if Flash and the page's JavaScript is disabled.
+// Supported sites include:
+// - youtube.com
+// - baidu.com
+// - twitter.com (in progress)
 // I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
@@ -22,6 +26,8 @@
 // @include     https://twitter.com/*
 // @include     http://*.twitter.com/*
 // @include     https://*.twitter.com/*
+// @include     http://*.baidu.com/*
+// @include     https://*.baidu.com/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -36,10 +42,6 @@
 "use strict";
 
 // ### Utility functions (all referentially transparent)
-
-
-// Returns the last item in an array-like object.
-let last = array => Array.prototype.slice.call(array, -1)[0];
 
 // Takes a string representing a key->value map, and parses
 // it, given the expected string separating key-value pairs,
@@ -129,13 +131,18 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
   });
 };
 
-// ### Flickr fix
+// ### Baidu
+let baidu = function () {
+  restoreAttribute('img', 'data-src', 'src');
+};
+
+// ### Flickr (dead)
 
 //let flickr = function () {
 //  restoreAttribute('img.defer', 'data-defer-src', 'src');
 //};
 
-// ### Twitter fix
+// ### Twitter (incomplete)
 // TODO: Get this working for various kinds of streams (login, person, search, etc)
 let twitter_cleanup = function() {
   restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
@@ -161,13 +168,13 @@ let twitter = function () {
   twitter_footer();
 };
 
-// ### YouTube-scraping functions
+// ### YouTube
 // For extracting a URL of an HTML5 video.
 
 // Scrapes useful video location data and signatures from a YouTube page.
 let scrapeVideoLocationData = function (bodyHTML) {
   // Location data can be found in JSON object literals inside an inline SCRIPT tag.
-  let pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ \"(.*?)\"/,
+  let pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ ?\"(.*?)\"/,
       // A series of literal maps each corresponds to a way to request a different
       // format of the same video.
       sources = bodyHTML.match(pattern)[1].split(",");
@@ -230,6 +237,9 @@ let youtube = function() {
 
 if (location.href.contains('youtube.com')) {
   youtube();
+}
+if (location.href.contains('baidu.com')) {
+  baidu();
 }
 //if (location.href.contains('flickr.com')) {
 //  flickr();
