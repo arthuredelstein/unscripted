@@ -28,6 +28,8 @@
 // @include     https://*.twitter.com/*
 // @include     http://*.baidu.com/*
 // @include     https://*.baidu.com/*
+// @include     http://*.washingtonpost.com/*
+// @include     https://*.washingtonpost.com/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -131,8 +133,8 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
   });
 };
 
-// ### Baidu
-let baidu = function () {
+// ### Baidu, Washington Post
+let imgDataSrc = function () {
   restoreAttribute('img', 'data-src', 'src');
 };
 
@@ -239,7 +241,10 @@ if (location.href.contains('youtube.com')) {
   youtube();
 }
 if (location.href.contains('baidu.com')) {
-  baidu();
+  imgDataSrc();
+}
+if (location.href.contains('washingtonpost.com')) {
+  imgDataSrc();
 }
 //if (location.href.contains('flickr.com')) {
 //  flickr();
