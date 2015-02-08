@@ -30,6 +30,8 @@
 // @include     https://*.baidu.com/*
 // @include     http://*.washingtonpost.com/*
 // @include     https://*.washingtonpost.com/*
+// @include     http://*.theguardian.com/*
+// @include     https://*.theguardian.com/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -235,6 +237,17 @@ let youtube = function() {
    restoreAttribute('img', 'data-thumb', 'src');
 };
 
+let guardian = function() {
+  Array.prototype.forEach.call(document.querySelectorAll('div[data-src]'), function (element) {
+    let src = element.getAttribute('data-src'),
+        srcFixed = src.replace('{width}', element.clientWidth),
+        img = document.createElement('img');
+    img.src = srcFixed;
+    img.setAttribute('class', 'responsive-image');
+    element.appendChild(img);    
+  });
+};
+
 // Run the main function to immediately bring web page to heel.
 
 if (location.href.contains('youtube.com')) {
@@ -252,6 +265,8 @@ if (location.href.contains('washingtonpost.com')) {
 if (location.href.contains('twitter.com')) {
   twitter();
 }
-
+if (location.href.contains('guardian.com')) {
+  guardian();
+}
 // Terminate enclosing function.
 })();
