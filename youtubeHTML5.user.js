@@ -258,15 +258,14 @@ let guardian = function() {
 
 let democracyNow = function () {
   // Hide an ugly no javascript warning.
-  document.querySelector("div#player_not_available").hidden = true;
+  document.querySelector("div#player_not_available").hidden = "true";
   // Read the video settings, which contain the video URL and start time.
   let videoSettings = JSON.parse(document.querySelector("div#video_player script.settings").innerHTML),
-      src = videoSettings.file + videoSettings.start ? ("#t=" + videoSettings.start) : "",
+      src = videoSettings.file + (videoSettings.start ? ("#t=" + videoSettings.start) : ""),
       videoPlayer = document.querySelector("div#video_player"),
       video = document.createElement('video');
   video.src = src;
-  video.width = "100%";
-  video.height = "100%";
+  video.style = "width: 100%; height: 100%";
   videoPlayer.insertBefore(video, videoPlayer.firstChild);
 };
 
