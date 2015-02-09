@@ -246,7 +246,7 @@ let youtube = function() {
 };
 
 let guardian = function() {
-  Array.prototype.forEach.call(document.querySelectorAll('div[data-src]'), function (element) {
+  Array.prototype.forEach.call(document.querySelectorAll('div[class~="fc-item__image-container"][data-src]'), function (element) {
     let src = element.getAttribute('data-src'),
         srcFixed = src.replace('{width}', element.clientWidth),
         img = document.createElement('img');
