@@ -8,6 +8,8 @@
 // - youtube.com
 // - baidu.com
 // - twitter.com (in progress)
+// - guardian.com
+// - washingtonpost.com
 // I hope this script is useful for the Tor Browser Bundle, where it is safest to turn off JavaScript.
 
 // This script can be [installed from UserScripts.org](http://userscripts.org/scripts/show/308677)
@@ -28,10 +30,16 @@
 // @include     https://*.twitter.com/*
 // @include     http://*.baidu.com/*
 // @include     https://*.baidu.com/*
+// @include     http://*.sina.com.cn/*
+// @include     https://*.sina.com.cn/*
+// @include     http://*.ebay.com/*
+// @include     https://*.ebay.com/*
 // @include     http://*.washingtonpost.com/*
 // @include     https://*.washingtonpost.com/*
 // @include     http://*.theguardian.com/*
 // @include     https://*.theguardian.com/*
+// @include     http://*.democracynow.org/*
+// @include     https://*.democracynow.org/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -135,7 +143,7 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
   });
 };
 
-// ### Baidu, Washington Post
+// ### Baidu, Washington Post, Weibo
 let imgDataSrc = function () {
   restoreAttribute('img', 'data-src', 'src');
 };
@@ -248,6 +256,18 @@ let guardian = function() {
   });
 };
 
+let democracyNow = function () {
+  // Hide an ugly no javascript warning.
+  document.querySelector("div#player_not_available").hidden = true;
+  // Read the video settings, which contain the video URL and start time.
+  let videoSettings = JSON.parse(document.querySelector("div#video_player script.settings").innerHTML),
+      src = videoSettings.file + "#t=" + videoSettings.start,
+      videoPlayer = document.querySelector("div#video_player"),
+      video = document.createElement('video');
+  video.src = src;
+  videoPlayer.insertBefore(video, videoPlayer.firstChild);
+};
+
 // Run the main function to immediately bring web page to heel.
 
 if (location.href.contains('youtube.com')) {
@@ -267,6 +287,17 @@ if (location.href.contains('twitter.com')) {
 }
 if (location.href.contains('guardian.com')) {
   guardian();
+}
+if (location.href.contains('sina.com.cn')) {
+  imgDataSrc();
+  restoreAttribute('img', 'real_src', 'src');  
+}
+if (location.href.contains('ebay.com')) {
+  imgDataSrc();
+  document.querySelector("noscript.nojs").innerHTML = "";
+}
+if (location.href.contains('democracynow.org')) {
+  democracyNow();
 }
 // Terminate enclosing function.
 })();
