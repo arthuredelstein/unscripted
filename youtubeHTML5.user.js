@@ -261,7 +261,7 @@ let democracyNow = function () {
   document.querySelector("div#player_not_available").hidden = true;
   // Read the video settings, which contain the video URL and start time.
   let videoSettings = JSON.parse(document.querySelector("div#video_player script.settings").innerHTML),
-      src = videoSettings.file + "#t=" + videoSettings.start,
+      src = videoSettings.file + videoSettings.start ? ("#t=" + videoSettings.start) : "",
       videoPlayer = document.querySelector("div#video_player"),
       video = document.createElement('video');
   video.src = src;
