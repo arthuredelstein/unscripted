@@ -265,6 +265,8 @@ let democracyNow = function () {
       videoPlayer = document.querySelector("div#video_player"),
       video = document.createElement('video');
   video.src = src;
+  video.width = "100%";
+  video.height = "100%";
   videoPlayer.insertBefore(video, videoPlayer.firstChild);
 };
 
