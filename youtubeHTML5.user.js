@@ -182,7 +182,7 @@ let restoreFunctions = {
   restoreAttribute('img', 'real_src', 'src');  
 },
 
-"theguardianl.com" : function() {
+"theguardian.com" : function() {
   Array.prototype.forEach.call(document.querySelectorAll('div[class~="fc-item__image-container"][data-src]'), function (element) {
     let src = element.getAttribute('data-src'),
         srcFixed = src.replace('{width}', element.clientWidth),
@@ -303,7 +303,7 @@ let hostTails = function (host) {
 // The main function that calls a restoreFunction on each appropriate web page.
 let main = function () {
   let tails = hostTails(location.hostname);
-  for (let tail in tails) {
+  for (let tail of tails) {
     let restoreFunction = restoreFunctions[tail];
     if (restoreFunction) restoreFunction();
   }
