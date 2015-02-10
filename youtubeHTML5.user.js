@@ -143,7 +143,8 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
   });
 };
 
-// ### Common case for restoring images
+// __restoreDeferredImages__.
+// Common function for restoring images.
 let restoreDeferredImages = function () {
   restoreAttribute('img', 'data-src', 'src');
 };
