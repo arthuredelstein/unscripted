@@ -166,6 +166,8 @@ let restoreFunctions = {
       video = document.createElement('video');
   video.src = src;
   video.style = "width: 100%; height: 100%";
+  video.controls = "true";
+  video.poster = videoSettings.image || "";
   videoPlayer.insertBefore(video, videoPlayer.firstChild);
 },
 
