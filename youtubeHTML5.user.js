@@ -42,6 +42,8 @@
 // @include     https://*.democracynow.org/*
 // @include     http://*.lemonde.fr/*
 // @include     https://*.lemonde.fr/*
+// @include     http://*.spiegel.de/*
+// @include     https://*.spiegel.de/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -187,6 +189,10 @@ let restoreFunctions = {
 "sina.com.cn" : function () {
   restoreDeferredImages();
   restoreAttribute('img', 'real_src', 'src');  
+},
+
+"spiegel.de" : function () {
+  restoreAttribute('img', 'data-original', 'src');
 },
 
 "theguardian.com" : function() {
