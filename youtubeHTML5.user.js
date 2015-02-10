@@ -40,6 +40,8 @@
 // @include     https://*.theguardian.com/*
 // @include     http://*.democracynow.org/*
 // @include     https://*.democracynow.org/*
+// @include     http://*.lemonde.fr/*
+// @include     https://*.lemonde.fr/*
 // @version     1
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
@@ -135,8 +137,8 @@ let isHttps = function (url) {
 // Restore images, links, or other elements that ordinarily need JavaScript to
 // work correctly.                                                                                                                     
 
-let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttribute) {
-  Array.prototype.forEach.call(document.querySelectorAll(thumbnailSelector), element => {
+let restoreAttribute = function (selector, sourceAttribute, targetAttribute) {
+  Array.prototype.forEach.call(document.querySelectorAll(selector), element => {
     if (element.hasAttribute(sourceAttribute)) {
       element.setAttribute(targetAttribute, element.getAttribute(sourceAttribute));
     }
@@ -179,6 +181,8 @@ let restoreFunctions = {
 "flickr.com" : null, //function () {
 //  restoreAttribute('img.defer', 'data-defer-src', 'src');
 //},
+
+"lemonde.fr" : restoreDeferredImages,
 
 "sina.com.cn" : function () {
   restoreDeferredImages();
