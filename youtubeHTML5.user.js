@@ -143,121 +143,20 @@ let restoreAttribute = function (thumbnailSelector, sourceAttribute, targetAttri
   });
 };
 
-// ### Baidu, Washington Post, Weibo
-let imgDataSrc = function () {
+// ### Common case for restoring images
+let restoreDeferredImages = function () {
   restoreAttribute('img', 'data-src', 'src');
 };
 
-// ### Flickr (dead)
+// ## restoreFunctions
+// A map of hostname tails to the functions that restore web pages with a matching
+// hostname.
+let restoreFunctions = {
 
-//let flickr = function () {
-//  restoreAttribute('img.defer', 'data-defer-src', 'src');
-//};
+"baidu.com" : restoreDeferredImages,
 
-// ### Twitter (incomplete)
-// TODO: Get this working for various kinds of streams (login, person, search, etc)
-let twitter_cleanup = function() {
-  restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
-  restoreAttribute("a.twitter-timeline-link", "data-resolved-url-large", "href");
-};
-
-let twitter_footer = function () {
-  let itemList = document.querySelector("div.GridTimeline-items"),
-      lastItemID = itemList.getAttribute("data-max-id"),
-      nextItemsURL = "https://twitter.com/i/profiles/show/NickKristof/timeline?max_id=" + lastItemID;
-  GM_xmlhttpRequest({
-    method: "GET",
-    url: nextItemsURL,
-    onload: function (response) {
-      itemList.insertAdjacentHTML('beforeend', JSON.parse(response.responseText).items_html);
-      twitter_cleanup();
-    }
-  });
-};
-
-let twitter = function () {
-  twitter_cleanup();
-  twitter_footer();
-};
-
-// ### YouTube
-// For extracting a URL of an HTML5 video.
-
-// Scrapes useful video location data and signatures from a YouTube page.
-let scrapeVideoLocationData = function (bodyHTML) {
-  // Location data can be found in JSON object literals inside an inline SCRIPT tag.
-  let pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ ?\"(.*?)\"/,
-      // A series of literal maps each corresponds to a way to request a different
-      // format of the same video.
-      sources = bodyHTML.match(pattern)[1].split(",");
-  // Read the data from these literal maps.
-  return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
-};
-
-// Scrape necessary data from the YouTube page to construct a URL
-// that points to an HTML5 version of the video.
-let extractHTML5VideoURL = function (bodyHTML) {
-  let chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
-      // The 'url' tag from chosenVideoItem contains most of the URL we need
-      // for obtaining the HTML5 video. URL-decode the tag to get a pure
-      // URL, and ensure it uses HTTPS.
-      url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),
-      // Read the tags from this URL, in turn.
-      tags = getQueryMap(url);
-  // The signature / sig tag is necessary to obtain the video.
-  tags.signature = tags.signature || chosenVideoItem.signature || chosenVideoItem.sig;
-  // Return a URL that has the full complement of tags.
-  return setQueryMap(url, tags);
-};
-
-// ### Mutating the YouTube page.
-
-// Embed the video element in the YouTube page and return a reference to it.
-let embedVideo = function (html5VideoURL) {
-  // Place it in the old playerAPI box.
-  let playerAPI = document.querySelector("div#player-api");
-  playerAPI.style.position = "relative";
-  playerAPI.innerHTML = '<div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"> \
-                        <video id="unscripted" src="' + html5VideoURL + '" style="width: 100%; height: 100%" controls></video> \
-                        </div>';
-  return document.querySelector('video#unscripted');
-};
-
-// ### The main function
-
-// Alter the YouTube page to show its video without needing the page's JavaScript.
-let youtube = function() {
-   // Let's always use HTTPS in this script, to be safer.
-   // Redundant if user uses the HTTPSEverywhere plugin.
-   if (!isHttps(location.href)) {
-     location.href = changeToHttps(location.href);
-   }
-   try {
-     let html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
-     // Swap old video for new HTML5 video.
-     let video = embedVideo(html5VideoURL);
-     // Play the video immediately, just as YouTube does.
-     video.play();
-   } catch (e) {
-     console.log(e);
-     // Never mind.
-   }
-   restoreAttribute('img', 'data-thumb', 'src');
-};
-
-let guardian = function() {
-  Array.prototype.forEach.call(document.querySelectorAll('div[class~="fc-item__image-container"][data-src]'), function (element) {
-    let src = element.getAttribute('data-src'),
-        srcFixed = src.replace('{width}', element.clientWidth),
-        img = document.createElement('img');
-    img.src = srcFixed;
-    img.setAttribute('class', 'responsive-image');
-    element.appendChild(img);    
-  });
-};
-
-let democracyNow = function () {
-  // Hide an ugly no javascript warning.
+"democracynow.org" : function () {
+  // Hide an ugly no-javascript warning.
   document.querySelector("div#player_not_available").hidden = "true";
   // Read the video settings, which contain the video URL and start time.
   let videoSettings = JSON.parse(document.querySelector("div#video_player script.settings").innerHTML),
@@ -267,38 +166,151 @@ let democracyNow = function () {
   video.src = src;
   video.style = "width: 100%; height: 100%";
   videoPlayer.insertBefore(video, videoPlayer.firstChild);
+},
+
+"ebay.com" : function () {
+  restoreDeferredImages();
+  document.querySelector("noscript.nojs").innerHTML = "";
+},
+
+"flickr.com" : null, //function () {
+//  restoreAttribute('img.defer', 'data-defer-src', 'src');
+//},
+
+"sina.com.cn" : function () {
+  restoreDeferredImages();
+  restoreAttribute('img', 'real_src', 'src');  
+},
+
+"theguardianl.com" : function() {
+  Array.prototype.forEach.call(document.querySelectorAll('div[class~="fc-item__image-container"][data-src]'), function (element) {
+    let src = element.getAttribute('data-src'),
+        srcFixed = src.replace('{width}', element.clientWidth),
+        img = document.createElement('img');
+    img.src = srcFixed;
+    img.setAttribute('class', 'responsive-image');
+    element.appendChild(img);    
+  });
+},
+
+"twitter.com" : (function () {
+  // ### Twitter (incomplete)
+  // TODO: Get this working for various kinds of streams (login, person, search, etc)
+  let twitter_cleanup = function() {
+    restoreAttribute("a.twitter-timeline-link", "data-expanded-url", "href");
+    restoreAttribute("a.twitter-timeline-link", "data-resolved-url-large", "href");
+  };
+
+  let twitter_footer = function () {
+    let itemList = document.querySelector("div.GridTimeline-items"),
+        lastItemID = itemList.getAttribute("data-max-id"),
+        nextItemsURL = "https://twitter.com/i/profiles/show/NickKristof/timeline?max_id=" + lastItemID;
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: nextItemsURL,
+      onload: function (response) {
+        itemList.insertAdjacentHTML('beforeend', JSON.parse(response.responseText).items_html);
+        twitter_cleanup();
+      }
+    });
+  };
+
+  let twitter = function () {
+    twitter_cleanup();
+    twitter_footer();
+  };
+})(),
+
+"washingtonpost.com" : restoreDeferredImages,
+
+"youtube.com" : (function () {
+  // Scrapes useful video location data and signatures from a YouTube page.
+  let scrapeVideoLocationData = function (bodyHTML) {
+    // Location data can be found in JSON object literals inside an inline SCRIPT tag.
+    let pattern = /\"url\_encoded\_fmt\_stream\_map\"\:\ ?\"(.*?)\"/,
+        // A series of literal maps each corresponds to a way to request a different
+        // format of the same video.
+        sources = bodyHTML.match(pattern)[1].split(",");
+    // Read the data from these literal maps.
+    return sources.map(function (source) { return stringToMap(source, "\\u0026", "="); });
+  };
+
+  // Scrape necessary data from the YouTube page to construct a URL
+  // that points to an HTML5 version of the video.
+  let extractHTML5VideoURL = function (bodyHTML) {
+    let chosenVideoItem = pickMapsWithTag(scrapeVideoLocationData(bodyHTML), "itag", "43")[0],
+        // The 'url' tag from chosenVideoItem contains most of the URL we need
+        // for obtaining the HTML5 video. URL-decode the tag to get a pure
+        // URL, and ensure it uses HTTPS.
+        url = changeToHttps(decodeURIComponent(chosenVideoItem.url)),
+        // Read the tags from this URL, in turn.
+        tags = getQueryMap(url);
+    // The signature / sig tag is necessary to obtain the video.
+    tags.signature = tags.signature || chosenVideoItem.signature || chosenVideoItem.sig;
+    // Return a URL that has the full complement of tags.
+    return setQueryMap(url, tags);
+  };
+
+  // ### Mutating the YouTube page.
+
+  // Embed the video element in the YouTube page and return a reference to it.
+  let embedVideo = function (html5VideoURL) {
+    // Place it in the old playerAPI box.
+    let playerAPI = document.querySelector("div#player-api");
+    playerAPI.style.position = "relative";
+    playerAPI.innerHTML = '<div style="background-color: black; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 99;"> \
+                          <video id="unscripted" src="' + html5VideoURL + '" style="width: 100%; height: 100%" controls></video> \
+                          </div>';
+    return document.querySelector('video#unscripted');
+  };
+
+  // Alter the YouTube page to show its video without needing the page's JavaScript.
+  return function() {
+     // Let's always use HTTPS in this script, to be safer.
+     // Redundant if user uses the HTTPSEverywhere plugin.
+     if (!isHttps(location.href)) {
+       location.href = changeToHttps(location.href);
+     }
+     try {
+       let html5VideoURL = extractHTML5VideoURL(document.body.innerHTML);
+       // Swap old video for new HTML5 video.
+       let video = embedVideo(html5VideoURL);
+       // Play the video immediately, just as YouTube does.
+       video.play();
+     } catch (e) {
+       console.log(e);
+       // Never mind.
+     }
+     restoreAttribute('img', 'data-thumb', 'src');
+  };
+})(),
+
 };
 
-// Run the main function to immediately bring web page to heel.
+// __hostTails(host)__.
+// Takes a host, like "www.yahoo.co.jp", and returns ever-longer tails, e.g.,
+// ["jp", "co.jp", "yahoo.co.jp", "www.yahoo.co.jp"].
+let hostTails = function (host) {
+  let fragments = host.split(/\./),
+      tails = [];
+  for (let i = fragments.length - 1; i >= 0; --i) {
+    tails.push(fragments.slice(i).join("."));
+  }
+  return tails;
+};
 
-if (location.href.contains('youtube.com')) {
-  youtube();
-}
-if (location.href.contains('baidu.com')) {
-  imgDataSrc();
-}
-if (location.href.contains('washingtonpost.com')) {
-  imgDataSrc();
-}
-//if (location.href.contains('flickr.com')) {
-//  flickr();
-//}
-if (location.href.contains('twitter.com')) {
-  twitter();
-}
-if (location.href.contains('guardian.com')) {
-  guardian();
-}
-if (location.href.contains('sina.com.cn')) {
-  imgDataSrc();
-  restoreAttribute('img', 'real_src', 'src');  
-}
-if (location.href.contains('ebay.com')) {
-  imgDataSrc();
-  document.querySelector("noscript.nojs").innerHTML = "";
-}
-if (location.href.contains('democracynow.org')) {
-  democracyNow();
-}
+// __main()__.
+// The main function that calls a restoreFunction on each appropriate web page.
+let main = function () {
+  let tails = hostTails(location.hostname);
+  for (let tail in tails) {
+    let restoreFunction = restoreFunctions[tail];
+    if (restoreFunction) restoreFunction();
+  }
+};
+
+// Restore current web page immediately.
+main();
+
 // Terminate enclosing function.
 })();
